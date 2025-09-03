@@ -2,7 +2,7 @@
 
 > 智能Figma翻译插件，支持多AI引擎和节点定位功能
 
-[![Version](https://img.shields.io/badge/version-1.1.7-blue.svg)](https://github.com/your-username/tp-translator/releases)
+[![Version](https://img.shields.io/badge/version-1.1.7-blue.svg)](https://github.com/KevinWangQQ/tp-translator/releases)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 [![Figma](https://img.shields.io/badge/platform-Figma-orange.svg)](https://www.figma.com/)
 
@@ -35,14 +35,14 @@
 ### 安装方法
 
 #### 方法1: 从GitHub Releases安装
-1. 访问 [Releases](https://github.com/your-username/tp-translator/releases) 页面
+1. 访问 [Releases](https://github.com/KevinWangQQ/tp-translator/releases) 页面
 2. 下载最新版本的 `tp-translator-v1.1.7.zip`
 3. 解压到本地文件夹
 4. 在Figma中导入插件
 
 #### 方法2: 开发者安装
 ```bash
-git clone https://github.com/your-username/tp-translator.git
+git clone https://github.com/KevinWangQQ/tp-translator.git
 cd tp-translator
 ```
 
@@ -111,9 +111,8 @@ tp-translator/
 
 遇到问题或有建议？欢迎：
 
-- 🐛 [提交Issue](https://github.com/your-username/tp-translator/issues)
-- 💡 [功能建议](https://github.com/your-username/tp-translator/issues/new?template=feature_request.md)
-- 📧 发送邮件到: your-email@example.com
+- 🐛 [提交Issue](https://github.com/KevinWangQQ/tp-translator/issues)
+- 💡 [功能建议](https://github.com/KevinWangQQ/tp-translator/issues/new?template=feature_request.md)
 
 ---
 

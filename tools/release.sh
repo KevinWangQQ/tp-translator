@@ -18,6 +18,7 @@ PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 RELEASES_DIR="$PROJECT_ROOT/releases"
 SRC_DIR="$PROJECT_ROOT/src"
 ARCHIVES_DIR="$PROJECT_ROOT/archives"
+VERSION_HISTORY="$PROJECT_ROOT/VERSION_HISTORY.md"
 
 # Functions
 log_info() {
@@ -81,6 +82,120 @@ check_prerequisites() {
     fi
 }
 
+update_version_history() {
+    local version=$1
+    local release_type=$2
+    local release_dir="$3"
+    
+    if [[ ! -f "$VERSION_HISTORY" ]]; then
+        log_warning "VERSION_HISTORY.md not found, skipping history update"
+        return 0
+    fi
+    
+    log_info "Updating version history..."
+    
+    local current_date=$(date +%Y-%m-%d)
+    local release_date=$(date +%Y-%m-%d)
+    
+    # Create backup
+    cp "$VERSION_HISTORY" "$VERSION_HISTORY.backup"
+    
+    # Update the overview table - change status from Planned to Released
+    if grep -q "| v$version |.*📅 Planned" "$VERSION_HISTORY"; then
+        # Update existing planned version
+        sed -i '' "s/| v$version |.*📅 Planned.*|.*/| v$version | ✅ Released | $release_date | $(echo $release_type | tr '[:lower:]' '[:upper:]') | Released stable version |/" "$VERSION_HISTORY"
+        log_info "Updated planned version v$version to released status"
+    else
+        # Add new version to overview table (after the header)
+        local table_entry="| v$version | ✅ Released | $release_date | $(echo $release_type | tr '[:lower:]' '[:upper:]') | Released version |"
+        sed -i '' "/|------|------|----------|------|------|/a\\
+$table_entry" "$VERSION_HISTORY"
+        log_info "Added new version v$version to overview table"
+    fi
+    
+    # Get package size
+    local zip_file="$release_dir/tp-translator-v$version.zip"
+    local package_size="Unknown"
+    if [[ -f "$zip_file" ]]; then
+        package_size=$(ls -lh "$zip_file" | awk '{print $5}')
+    fi
+    
+    # Check if detailed section already exists
+    if grep -q "### v$version -" "$VERSION_HISTORY"; then
+        # Update existing section - change status to completed
+        sed -i '' "s/#### 📋 版本概述.*/#### 📋 版本概述\\
+这个版本已成功发布，包含计划的所有功能。/" "$VERSION_HISTORY"
+        
+        # Update release info section if it exists, otherwise add it
+        if grep -A 20 "### v$version -" "$VERSION_HISTORY" | grep -q "#### 📦 发布信息"; then
+            # Update existing release info
+            sed -i '' "/#### 📦 发布信息/,/#### [^📦]/ {
+                s/- \*\*包大小\*\*:.*/- **包大小**: $package_size/
+                s/- \*\*文件位置\*\*:.*/- **文件位置**: \`releases\/v$version\/tp-translator-v$version.zip\`/
+            }" "$VERSION_HISTORY"
+        else
+            # Add release info section before any existing sections after the overview
+            local temp_file=$(mktemp)
+            awk -v version="v$version" -v size="$package_size" '
+            /^### / && match($0, version) { in_section=1; print; next }
+            in_section && /^#### / && !release_info_added { 
+                print "#### 📦 发布信息"
+                print "- **包大小**: " size
+                print "- **文件位置**: `releases/" version "/tp-translator-" version ".zip`"
+                print "- **发布日期**: " strftime("%Y-%m-%d")
+                print ""
+                release_info_added=1
+            }
+            /^### / && !match($0, version) && in_section { in_section=0 }
+            { print }
+            ' "$VERSION_HISTORY" > "$temp_file"
+            mv "$temp_file" "$VERSION_HISTORY"
+        fi
+    else
+        # Create new detailed section for the version
+        local detailed_section="### v$version - Released Version
+**发布日期**: $release_date  
+**版本类型**: $(get_release_type_description "$release_type")  
+**开发状态**: ✅ 已完成  
+
+#### 📋 版本概述
+版本 v$version 已成功发布。
+
+#### 📦 发布信息
+- **包大小**: $package_size
+- **文件位置**: \`releases/v$version/tp-translator-v$version.zip\`
+- **发布日期**: $release_date
+
+#### 🎯 使用建议
+- 适合生产环境使用
+- 详细功能说明请参考发布说明文档
+
+---"
+        
+        # Add to detailed records section
+        local insertion_point="## 📝 详细版本记录"
+        sed -i '' "/$insertion_point/a\\
+\\
+$detailed_section" "$VERSION_HISTORY"
+    fi
+    
+    # Update the last modified date
+    sed -i '' "s/最后更新: [0-9-]*/最后更新: $current_date/" "$VERSION_HISTORY"
+    
+    log_success "Version history updated successfully"
+}
+
+get_release_type_description() {
+    local type=$1
+    case $type in
+        stable) echo "Stable Release" ;;
+        beta) echo "Beta Release" ;;
+        alpha) echo "Alpha Release" ;;
+        hotfix) echo "Hotfix Release" ;;
+        *) echo "Release" ;;
+    esac
+}
+
 create_release() {
     local version=$1
     local release_type=$2
@@ -103,14 +218,8 @@ create_release() {
         cp "$SRC_DIR/ui.js" "$plugin_dir/"
     fi
     
-    # Update version in manifest.json
-    log_info "Updating version in manifest.json..."
-    if command -v jq >/dev/null 2>&1; then
-        jq --arg version "$version" '.version = $version' "$plugin_dir/manifest.json" > "$plugin_dir/manifest.json.tmp"
-        mv "$plugin_dir/manifest.json.tmp" "$plugin_dir/manifest.json"
-    else
-        log_warning "jq not found, skipping automatic version update in manifest.json"
-    fi
+    # Note: Figma manifest doesn't support version field, skipping version update
+    log_info "Manifest.json copied (Figma doesn't support version field in manifest)"
     
     # Create README for the release
     log_info "Creating README..."
@@ -183,6 +292,9 @@ EOF
         ln -sf "v$version" latest
         cd - >/dev/null
     fi
+    
+    # Update version history
+    update_version_history "$version" "$release_type" "$release_dir"
     
     log_success "Release v$version created successfully!"
     log_info "Release directory: $release_dir"

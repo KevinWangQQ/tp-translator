@@ -43,13 +43,20 @@ show_usage() {
     echo "  latest              Show latest version"
     echo "  archive [version]   Archive a version"
     echo "  status              Show release status summary"
+    echo "  roadmap             Show version roadmap and planning"
+    echo "  history             Show version history"
     echo "  cleanup             Clean up temporary files"
     echo ""
     echo "Examples:"
     echo "  $0 list             # List all versions"
     echo "  $0 info 1.2.0       # Show info for v1.2.0"
     echo "  $0 latest           # Show latest version"
+    echo "  $0 roadmap          # Show version planning roadmap"
+    echo "  $0 history          # Show detailed version history"
     echo "  $0 archive 1.1.0    # Archive v1.1.0"
+    echo ""
+    echo "Planning Commands:"
+    echo "  Use ./plan.sh for version planning and roadmap management"
     echo ""
 }
 
@@ -236,6 +243,63 @@ show_status() {
     fi
 }
 
+show_roadmap() {
+    local version_history="$PROJECT_ROOT/VERSION_HISTORY.md"
+    
+    if [[ ! -f "$version_history" ]]; then
+        log_warning "VERSION_HISTORY.md not found"
+        log_info "Use './plan.sh plan [version]' to create version plans"
+        return
+    fi
+    
+    log_info "Version Roadmap and Planning"
+    echo ""
+    
+    # Show overview table
+    echo "📊 Version Overview:"
+    grep -A 10 "| 版本 | 状态 | 发布日期 | 类型 | 描述 |" "$version_history" | tail -n +3
+    echo ""
+    
+    # Show planned versions
+    echo "📅 Planned Versions:"
+    if grep -q "📅 Planned" "$version_history"; then
+        grep "| v[0-9].*📅 Planned" "$version_history" | while read line; do
+            if [[ $line =~ v([0-9]+\.[0-9]+\.[0-9]+) ]]; then
+                local version="${BASH_REMATCH[1]}"
+                echo "  📋 v$version - $(echo "$line" | cut -d'|' -f6 | xargs)"
+            fi
+        done
+    else
+        echo "  No planned versions found"
+    fi
+    
+    echo ""
+    log_info "Use './plan.sh plan [version]' to create new version plans"
+    log_info "Use './plan.sh status' for detailed planning status"
+}
+
+show_history() {
+    local version_history="$PROJECT_ROOT/VERSION_HISTORY.md"
+    
+    if [[ ! -f "$version_history" ]]; then
+        log_warning "VERSION_HISTORY.md not found"
+        return
+    fi
+    
+    log_info "Opening version history..."
+    
+    if command -v code >/dev/null 2>&1; then
+        code "$version_history"
+        log_info "Opened in VS Code"
+    elif command -v cat >/dev/null 2>&1; then
+        echo ""
+        echo "=== VERSION HISTORY ==="
+        cat "$version_history"
+    else
+        log_info "Version history location: $version_history"
+    fi
+}
+
 cleanup() {
     log_info "Cleaning up temporary files..."
     
@@ -244,6 +308,9 @@ cleanup() {
     
     # Remove empty directories
     find "$RELEASES_DIR" -type d -empty -delete 2>/dev/null || true
+    
+    # Clean up backup files from version history updates
+    find "$PROJECT_ROOT" -name "VERSION_HISTORY.md.backup" -type f -delete 2>/dev/null || true
     
     log_success "Cleanup completed"
 }
@@ -273,6 +340,12 @@ main() {
             ;;
         status)
             show_status
+            ;;
+        roadmap)
+            show_roadmap
+            ;;
+        history)
+            show_history
             ;;
         cleanup)
             cleanup

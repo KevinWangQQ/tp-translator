@@ -766,6 +766,12 @@
       color: #92400e;
     }
     
+    .apply-status.reverted {
+      background: #fbbf24;
+      color: #1f2937;
+      border: 1px solid #d97706;
+    }
+    
     /* Notifications */
     .notification {
       position: fixed;
@@ -910,9 +916,9 @@
     
     .memory-translated {
       color: #059669;
-    }</style></head><body><div id="root"><div class="app"><header class="header"><div class="logo-section"><div class="logo"><div class="logo-icon">🔌</div><span class="logo-text">TP Translator</span></div><div class="header-actions"><span class="connection-status" id="connection-status">connecting</span> <button class="settings-btn" id="settings-btn" onclick="ui.toggleSettings()" title="Settings">⚙️</button></div></div><div class="nav-tabs"><button class="nav-tab active" onclick="ui.switchTab('home')">Home</button> <button class="nav-tab" onclick="ui.switchTab('translate')">Translate</button></div></header><div class="content"><div class="page active" id="home-page"><div class="form-group"><label class="form-label">Selection</label><div class="selection-card"><div class="selection-stats"><div class="stat-item"><span class="stat-value" id="total-nodes">0</span> <span class="stat-label">Total</span></div><div class="stat-item"><span class="stat-value" id="text-nodes">0</span> <span class="stat-label">Text Nodes</span></div></div><div class="selection-actions"><button class="btn btn-secondary btn-small" onclick="ui.refreshSelection()">🔄 Refresh</button> <button class="btn btn-secondary btn-small" onclick="ui.selectAllText()">📝 Select All Text</button></div></div></div><div class="form-group"><label class="form-label">Translation Engine</label><div class="form-row"><div class="form-col"><select class="select" id="engine"><option value="">Select Engine...</option></select></div><div class="form-col"><select class="select" id="model-select" style="display: none;"><option value="">Select Model...</option></select></div></div><div class="form-row" id="api-key-row" style="display: none; margin-top: 8px;"><div class="form-col"><input type="password" class="input" id="api-key" placeholder="Enter API Key"></div><div class="form-col" style="flex: 0 0 auto;"><button class="btn btn-secondary btn-small" onclick="ui.openEngineSettings()">⚙️ Configure</button></div></div></div><div class="form-group"><label class="form-label">Languages</label><div class="form-row"><div class="form-col"><select class="select" id="source-lang"><option value="auto">Auto-detect</option><option value="en">English</option><option value="zh-CN">Chinese (Simplified)</option><option value="ja">Japanese</option><option value="ko">Korean</option><option value="fr">French</option><option value="de">German</option><option value="es">Spanish</option></select></div><div class="form-col"><select class="select" id="target-lang"><option value="zh-CN">Chinese (Simplified)</option><option value="en">English</option><option value="ja">Japanese</option><option value="ko">Korean</option><option value="fr">French</option><option value="de">German</option><option value="es">Spanish</option></select></div></div></div><div class="form-group"><label class="form-label">Output Mode</label> <select class="select" id="output-mode"><option value="replace">Replace source text</option><option value="beside">Display beside</option><option value="newFrame">Display on new Frame</option><option value="newPage">Display on new page</option></select></div><div class="font-mapping-section"><div class="font-mapping-header"><span class="font-mapping-title">Font Mapping</span> <label class="engine-toggle"><input type="checkbox" id="font-mapping-enabled"> <span class="toggle-slider"></span></label></div><div class="font-mapping-content" id="font-mapping-content"><div class="font-weight-row"><span class="font-weight-label">Regular</span> <select class="select" style="flex: 1;"><option>Inter Regular</option><option>Roboto Regular</option><option>Arial Regular</option></select> <span class="font-arrow">→</span> <select class="select" style="flex: 1;"><option>Noto Sans SC Regular</option><option>PingFang SC Regular</option><option>Source Han Sans SC Regular</option></select></div><div class="font-weight-row"><span class="font-weight-label">Medium</span> <select class="select" style="flex: 1;"><option>Inter Medium</option><option>Roboto Medium</option><option>Arial Medium</option></select> <span class="font-arrow">→</span> <select class="select" style="flex: 1;"><option>Noto Sans SC Medium</option><option>PingFang SC Medium</option><option>Source Han Sans SC Medium</option></select></div><div class="font-weight-row"><span class="font-weight-label">Bold</span> <select class="select" style="flex: 1;"><option>Inter Bold</option><option>Roboto Bold</option><option>Arial Bold</option></select> <span class="font-arrow">→</span> <select class="select" style="flex: 1;"><option>Noto Sans SC Bold</option><option>PingFang SC Bold</option><option>Source Han Sans SC Bold</option></select></div></div></div><button class="btn btn-primary btn-full" id="translate-btn" onclick="ui.startTranslation()" disabled="disabled">🚀 Translate</button><div class="progress-section" id="progress-section"><div class="progress-header"><span class="progress-title">Translating...</span> <span class="progress-percentage" id="progress-percentage">0%</span></div><div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width: 0%"></div></div><div class="progress-status" id="progress-status">Initializing...</div></div></div><div class="page" id="translate-page"><div class="results-section active" id="results-section"><div class="form-group"><label class="form-label">Translation Results</label><div id="results-container"><div class="empty-state"><div class="empty-icon">📄</div><div class="empty-title">No translations yet</div><div class="empty-description">Switch to Home tab to start translating</div></div></div></div></div></div></div></div><div class="settings-modal" id="settings-modal"><div class="settings-content"><div class="settings-header"><h2 class="settings-title">Settings</h2><button class="close-btn" onclick="ui.closeSettings()">×</button></div><div class="settings-tabs"><button class="settings-tab active" onclick="ui.switchSettingsTab('common')">Common</button> <button class="settings-tab" onclick="ui.switchSettingsTab('memories')">Translation Memories</button></div><div class="settings-body"><div class="settings-page active" id="common-settings"><div class="settings-section"><h3 class="section-title"><span class="section-icon">🔑</span> Translation Engines</h3><div class="engine-card" id="openai-card"><div class="engine-header"><div class="engine-info"><div class="engine-logo openai">AI</div><div class="engine-details"><h4>OpenAI</h4><p>GPT-3.5 & GPT-4 models</p></div></div><label class="engine-toggle"><input type="checkbox" id="openai-enabled"> <span class="toggle-slider"></span></label></div><div class="engine-config" id="openai-config"><div class="form-group"><label class="form-label">API Key</label> <input type="password" class="input" id="openai-key" placeholder="sk-..."></div><div class="form-group"><label class="form-label">Model</label> <select class="select" id="openai-model"><option value="gpt-3.5-turbo-instruct">GPT-3.5 Turbo Instruct</option><option value="gpt-4">GPT-4</option><option value="gpt-4-turbo">GPT-4 Turbo</option></select></div><button class="btn btn-test" onclick="ui.testEngine('openai')" id="openai-test-btn">Test Connection</button></div></div><div class="engine-card" id="gemini-card"><div class="engine-header"><div class="engine-info"><div class="engine-logo gemini">G</div><div class="engine-details"><h4>Google Gemini</h4><p>Gemini Pro & Flash models</p></div></div><label class="engine-toggle"><input type="checkbox" id="gemini-enabled"> <span class="toggle-slider"></span></label></div><div class="engine-config" id="gemini-config"><div class="form-group"><label class="form-label">API Key</label> <input type="password" class="input" id="gemini-key" placeholder="AIza..."></div><div class="form-group"><label class="form-label">Model</label> <select class="select" id="gemini-model"><option value="gemini-pro">Gemini Pro</option><option value="gemini-1.5-pro">Gemini 1.5 Pro</option><option value="gemini-1.5-flash">Gemini 1.5 Flash</option></select></div><button class="btn btn-test" onclick="ui.testEngine('gemini')" id="gemini-test-btn">Test Connection</button></div></div></div><div class="settings-section"><h3 class="section-title"><span class="section-icon">🌐</span> Default Languages</h3><div class="form-row"><div class="form-col"><label class="form-label">Default Target Language</label> <select class="select" id="default-target-lang"><option value="zh-CN">Chinese (Simplified)</option><option value="en">English</option><option value="ja">Japanese</option><option value="ko">Korean</option></select></div></div></div></div><div class="settings-page" id="memories-settings"><div class="settings-section"><h3 class="section-title"><span class="section-icon">🧠</span> Translation Memory</h3><div class="form-group"><div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;"><span class="form-label">Recent Translations</span> <button class="btn btn-secondary btn-small" onclick="ui.clearMemories()">Clear All</button></div><div id="translation-memories"><div class="empty-state"><div class="empty-icon">🧠</div><div class="empty-title">No translation memories</div><div class="empty-description">Your recent translations will appear here</div></div></div></div></div></div></div><div class="settings-footer"><span class="settings-version">v1.2.0 修复版</span><div class="settings-actions"><button class="btn btn-secondary" onclick="ui.closeSettings()">Cancel</button> <button class="btn btn-primary" onclick="ui.saveSettings()">Save Settings</button></div></div></div></div></div><div class="notification" id="notification"></div><script>console.log('TP Translator with Settings UI loading...');
+    }</style></head><body><div id="root"><div class="app"><header class="header"><div class="logo-section"><div class="logo"><div class="logo-icon">🔌</div><span class="logo-text">TP Translator</span></div><div class="header-actions"><span class="connection-status" id="connection-status">connecting</span> <button class="settings-btn" id="settings-btn" onclick="ui.toggleSettings()" title="Settings">⚙️</button></div></div><div class="nav-tabs"><button class="nav-tab active" onclick="ui.switchTab('home')">Home</button> <button class="nav-tab" onclick="ui.switchTab('translate')">Translate</button></div></header><div class="content"><div class="page active" id="home-page"><div class="form-group"><label class="form-label">Selection</label><div class="selection-card"><div class="selection-stats"><div class="stat-item"><span class="stat-value" id="total-nodes">0</span> <span class="stat-label">Total</span></div><div class="stat-item"><span class="stat-value" id="text-nodes">0</span> <span class="stat-label">Text Nodes</span></div></div><div class="selection-actions"><button class="btn btn-secondary btn-small" onclick="ui.refreshSelection()">🔄 Refresh</button> <button class="btn btn-secondary btn-small" onclick="ui.selectAllText()">📝 Select All Text</button></div></div></div><div class="form-group"><label class="form-label">Translation Engine</label><div class="form-row"><div class="form-col"><select class="select" id="engine"><option value="">Select Engine...</option></select></div><div class="form-col"><select class="select" id="model-select" style="display: none;"><option value="">Select Model...</option></select></div></div><div class="form-row" id="api-key-row" style="display: none; margin-top: 8px;"><div class="form-col"><input type="password" class="input" id="api-key" placeholder="Enter API Key"></div><div class="form-col" style="flex: 0 0 auto;"><button class="btn btn-secondary btn-small" onclick="ui.openEngineSettings()">⚙️ Configure</button></div></div></div><div class="form-group"><label class="form-label">Languages</label><div class="form-row"><div class="form-col"><select class="select" id="source-lang"><option value="auto">Auto-detect</option><option value="en">English</option><option value="zh-CN">Chinese (Simplified)</option><option value="ja">Japanese</option><option value="ko">Korean</option><option value="fr">French</option><option value="de">German</option><option value="es">Spanish</option></select></div><div class="form-col"><select class="select" id="target-lang"><option value="zh-CN">Chinese (Simplified)</option><option value="en">English</option><option value="ja">Japanese</option><option value="ko">Korean</option><option value="fr">French</option><option value="de">German</option><option value="es">Spanish</option></select></div></div></div><div class="form-group"><label class="form-label">Output Mode</label> <select class="select" id="output-mode"><option value="replace">Replace source text</option><option value="beside">Display beside</option><option value="newFrame">Display on new Frame</option><option value="newPage">Display on new page</option></select></div><div class="font-mapping-section"><div class="font-mapping-header"><span class="font-mapping-title">Font Mapping</span> <label class="engine-toggle"><input type="checkbox" id="font-mapping-enabled"> <span class="toggle-slider"></span></label></div><div class="font-mapping-content" id="font-mapping-content"><div class="font-weight-row"><span class="font-weight-label">Regular</span> <select class="select" style="flex: 1;"><option>Inter Regular</option><option>Roboto Regular</option><option>Arial Regular</option></select> <span class="font-arrow">→</span> <select class="select" style="flex: 1;"><option>Noto Sans SC Regular</option><option>PingFang SC Regular</option><option>Source Han Sans SC Regular</option></select></div><div class="font-weight-row"><span class="font-weight-label">Medium</span> <select class="select" style="flex: 1;"><option>Inter Medium</option><option>Roboto Medium</option><option>Arial Medium</option></select> <span class="font-arrow">→</span> <select class="select" style="flex: 1;"><option>Noto Sans SC Medium</option><option>PingFang SC Medium</option><option>Source Han Sans SC Medium</option></select></div><div class="font-weight-row"><span class="font-weight-label">Bold</span> <select class="select" style="flex: 1;"><option>Inter Bold</option><option>Roboto Bold</option><option>Arial Bold</option></select> <span class="font-arrow">→</span> <select class="select" style="flex: 1;"><option>Noto Sans SC Bold</option><option>PingFang SC Bold</option><option>Source Han Sans SC Bold</option></select></div></div></div><button class="btn btn-primary btn-full" id="translate-btn" onclick="ui.startTranslation()" disabled="disabled">🚀 Translate</button><div class="progress-section" id="progress-section"><div class="progress-header"><span class="progress-title">Translating...</span> <span class="progress-percentage" id="progress-percentage">0%</span></div><div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width: 0%"></div></div><div class="progress-status" id="progress-status">Initializing...</div></div></div><div class="page" id="translate-page"><div class="results-section active" id="results-section"><div class="form-group"><div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;"><label class="form-label">Translation Results</label><button class="btn btn-warning btn-small" id="rollback-all-btn" onclick="ui.rollbackAllTranslations()" style="display: none;">🔄 回退所有翻译</button></div><div id="results-container"><div class="empty-state"><div class="empty-icon">📄</div><div class="empty-title">No translations yet</div><div class="empty-description">Switch to Home tab to start translating</div></div></div></div></div></div></div></div><div class="settings-modal" id="settings-modal"><div class="settings-content"><div class="settings-header"><h2 class="settings-title">Settings</h2><button class="close-btn" onclick="ui.closeSettings()">×</button></div><div class="settings-tabs"><button class="settings-tab active" onclick="ui.switchSettingsTab('common')">Common</button> <button class="settings-tab" onclick="ui.switchSettingsTab('memories')">Translation Memories</button></div><div class="settings-body"><div class="settings-page active" id="common-settings"><div class="settings-section"><h3 class="section-title"><span class="section-icon">🔑</span> Translation Engines</h3><div class="engine-card" id="openai-card"><div class="engine-header"><div class="engine-info"><div class="engine-logo openai">AI</div><div class="engine-details"><h4>OpenAI</h4><p>GPT-3.5 & GPT-4 models</p></div></div><label class="engine-toggle"><input type="checkbox" id="openai-enabled"> <span class="toggle-slider"></span></label></div><div class="engine-config" id="openai-config"><div class="form-group"><label class="form-label">API Key</label> <input type="password" class="input" id="openai-key" placeholder="sk-..."></div><div class="form-group"><label class="form-label">Model</label> <select class="select" id="openai-model"><option value="gpt-3.5-turbo-instruct">GPT-3.5 Turbo Instruct</option><option value="gpt-4">GPT-4</option><option value="gpt-4-turbo">GPT-4 Turbo</option></select></div><button class="btn btn-test" onclick="ui.testEngine('openai')" id="openai-test-btn">Test Connection</button></div></div><div class="engine-card" id="gemini-card"><div class="engine-header"><div class="engine-info"><div class="engine-logo gemini">G</div><div class="engine-details"><h4>Google Gemini</h4><p>Gemini Pro & Flash models</p></div></div><label class="engine-toggle"><input type="checkbox" id="gemini-enabled"> <span class="toggle-slider"></span></label></div><div class="engine-config" id="gemini-config"><div class="form-group"><label class="form-label">API Key</label> <input type="password" class="input" id="gemini-key" placeholder="AIza..."></div><div class="form-group"><label class="form-label">Model</label> <select class="select" id="gemini-model"><option value="gemini-pro">Gemini Pro</option><option value="gemini-1.5-pro">Gemini 1.5 Pro</option><option value="gemini-1.5-flash">Gemini 1.5 Flash</option></select></div><button class="btn btn-test" onclick="ui.testEngine('gemini')" id="gemini-test-btn">Test Connection</button></div></div></div><div class="settings-section"><h3 class="section-title"><span class="section-icon">🌐</span> Default Languages</h3><div class="form-row"><div class="form-col"><label class="form-label">Default Target Language</label> <select class="select" id="default-target-lang"><option value="zh-CN">Chinese (Simplified)</option><option value="en">English</option><option value="ja">Japanese</option><option value="ko">Korean</option></select></div></div></div></div><div class="settings-page" id="memories-settings"><div class="settings-section"><h3 class="section-title"><span class="section-icon">🧠</span> Translation Memory</h3><div class="form-group"><div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;"><span class="form-label">Recent Translations</span> <button class="btn btn-secondary btn-small" onclick="ui.clearMemories()">Clear All</button></div><div id="translation-memories"><div class="empty-state"><div class="empty-icon">🧠</div><div class="empty-title">No translation memories</div><div class="empty-description">Your recent translations will appear here</div></div></div></div></div></div></div><div class="settings-footer"><span class="settings-version">v1.2.1 用户体验增强版</span><div class="settings-actions"><button class="btn btn-secondary" onclick="ui.closeSettings()">Cancel</button> <button class="btn btn-primary" onclick="ui.saveSettings()">Save Settings</button></div></div></div></div></div><div class="notification" id="notification"></div><script>console.log('TP Translator with Settings UI loading...');
     
-    // Application state - 修复默认引擎问题
+    // Application state - 设置Gemini 1.5 Flash为默认引擎
     let appState = {
       connected: false,
       currentTab: 'home',
@@ -924,7 +930,7 @@
       fontMappingEnabled: false,
       engines: {
         openai: { enabled: false, apiKey: '', model: 'gpt-3.5-turbo-instruct' },
-        gemini: { enabled: true, apiKey: '', model: 'gemini-pro' } // 强制启用Gemini
+        gemini: { enabled: true, apiKey: '', model: 'gemini-1.5-flash' } // 默认为Gemini 1.5 Flash
       },
       settings: {
         defaultTargetLang: 'zh-CN'
@@ -1011,10 +1017,10 @@
         const select = document.getElementById('engine');
         select.innerHTML = '';
         
-        // 强制显示Gemini引擎（不管enabled状态）
+        // 强制显示Gemini引擎（不管enabled状态），默认为1.5 Flash
         const geminiOption = document.createElement('option');
         geminiOption.value = 'gemini';
-        geminiOption.textContent = 'Google Gemini (gemini-pro)';
+        geminiOption.textContent = 'Google Gemini (1.5 Flash)';
         geminiOption.selected = true; // 默认选中
         select.appendChild(geminiOption);
         
@@ -1344,6 +1350,7 @@
       
       renderResults() {
         const container = document.getElementById('results-container');
+        const rollbackBtn = document.getElementById('rollback-all-btn');
         
         if (appState.results.length === 0) {
           container.innerHTML = `
@@ -1353,8 +1360,13 @@
               <div class="empty-description">Switch to Home tab to start translating</div>
             </div>
           `;
+          rollbackBtn.style.display = 'none';
           return;
         }
+        
+        // Check if there are applied translations to show rollback button
+        const appliedResults = appState.results.filter(result => result.applied && result.status === 'success');
+        rollbackBtn.style.display = appliedResults.length > 0 ? 'block' : 'none';
         
         container.innerHTML = appState.results.map((result, index) => `
           <div class="result-item ${result.status}">
@@ -1371,7 +1383,11 @@
             ${result.translatedText ? `
               <div class="result-text">
                 <div class="result-label">Translation</div>
-                <div class="result-content">${this.escapeHtml(result.translatedText)}</div>
+                <div class="result-content" contenteditable="true" 
+                     data-result-index="${index}" 
+                     onblur="ui.handleTranslationEdit(this, ${index})"
+                     style="cursor: text; border: 1px dashed #e2e8f0; padding: 8px; min-height: 20px;"
+                     title="点击编辑翻译结果">${this.escapeHtml(result.translatedText)}</div>
               </div>
             ` : ''}
             ${result.error ? `
@@ -1383,12 +1399,12 @@
             <!-- 强制显示操作按钮 - 不管状态如何 -->
             <div class="result-actions">
               ${result.status === 'success' ? `
-                <span class="apply-status ${result.applied ? 'applied' : 'not-applied'}">
-                  ${result.applied ? '✅ Auto-applied' : '⚠️ Not applied'}
+                <span class="apply-status ${result.reverted ? 'reverted' : (result.applied ? 'applied' : 'not-applied')}">
+                  ${result.reverted ? '🔄 已回退' : (result.applied ? '✅ Auto-applied' : '⚠️ Not applied')}
                 </span>
-                ${!result.applied ? `
-                  <button class="btn btn-warning btn-small" onclick="ui.retryApplyTranslation(${index})" title="重试应用翻译">
-                    🔄 Retry
+                ${!result.applied || result.reverted ? `
+                  <button class="btn btn-warning btn-small" onclick="ui.retryApplyTranslation(${index})" title="${result.reverted ? '重新应用翻译' : '重试应用翻译'}">
+                    ${result.reverted ? '📝 Re-apply' : '🔄 Retry'}
                   </button>
                 ` : ''}
               ` : ''}
@@ -1410,11 +1426,45 @@
       copyTranslation(index) {
         const result = appState.results[index];
         if (result && result.translatedText) {
-          navigator.clipboard.writeText(result.translatedText).then(() => {
-            this.showNotification('Translation copied to clipboard', 'success');
-          }).catch(() => {
-            this.showNotification('Failed to copy translation', 'error');
-          });
+          // 尝试使用现代 Clipboard API
+          if (navigator.clipboard && window.isSecureContext) {
+            navigator.clipboard.writeText(result.translatedText).then(() => {
+              this.showNotification('翻译已复制到剪贴板', 'success');
+            }).catch(() => {
+              this.fallbackCopy(result.translatedText);
+            });
+          } else {
+            // 备用复制方法
+            this.fallbackCopy(result.translatedText);
+          }
+        }
+      },
+      
+      // 备用复制方法
+      fallbackCopy(text) {
+        try {
+          // 创建临时文本域
+          const textArea = document.createElement('textarea');
+          textArea.value = text;
+          textArea.style.position = 'fixed';
+          textArea.style.left = '-9999px';
+          textArea.style.top = '-9999px';
+          document.body.appendChild(textArea);
+          textArea.focus();
+          textArea.select();
+          
+          // 执行复制
+          const successful = document.execCommand('copy');
+          document.body.removeChild(textArea);
+          
+          if (successful) {
+            this.showNotification('翻译已复制到剪贴板', 'success');
+          } else {
+            this.showNotification('复制失败，请手动选择文本复制', 'error');
+          }
+        } catch (err) {
+          console.error('Fallback copy failed:', err);
+          this.showNotification('复制功能暂不可用', 'error');
         }
       },
       
@@ -1433,36 +1483,33 @@
         }
         
         try {
-          // 获取当前翻译模式
-          const mode = document.getElementById('mode').value || 'replace';
+          // 获取当前翻译模式 - 使用安全的方式获取
+          const modeElement = document.getElementById('output-mode');
+          const mode = modeElement ? modeElement.value : 'replace';
+          
+          // 如果是已回退的翻译，清除回退状态
+          if (result.reverted) {
+            result.reverted = false;
+          }
           
           // 发送重试请求
-          const response = await this.sendMessage({
-            type: 'apply-translation',
-            payload: {
-              nodeId: result.nodeId,
-              translatedText: result.translatedText,
-              mode: mode
-            }
+          this.postMessage('apply-translation', {
+            nodeId: result.nodeId,
+            translatedText: result.translatedText,
+            mode: mode
           });
           
-          if (response && response.payload && response.payload.success) {
-            // 更新结果状态
-            appState.results[index].applied = true;
-            this.renderResults();
-            this.showNotification('Translation applied successfully!', 'success');
-          } else {
-            const errorMsg = response?.payload?.error || 'Failed to apply translation';
-            this.showNotification(`Retry failed: ${errorMsg}`, 'error');
-          }
+          // 注意：响应将通过 apply-result 消息异步处理
+          this.showNotification('正在重新应用翻译...', 'info');
+          
         } catch (error) {
           console.error('Retry apply translation error:', error);
-          this.showNotification('Retry failed: ' + error.message, 'error');
-        } finally {
+          this.showNotification('重试失败: ' + error.message, 'error');
+          
           // 恢复按钮状态
           if (retryBtn) {
             retryBtn.disabled = false;
-            retryBtn.innerHTML = '🔄 Retry';
+            retryBtn.innerHTML = result.reverted ? '📝 Re-apply' : '🔄 Retry';
           }
         }
       },
@@ -1535,6 +1582,17 @@
             this.updateUI();
             break;
             
+          case 'selection-changed':
+            // 自动刷新选择信息，无需用户点击refresh
+            appState.selection = {
+              totalNodes: message.payload.totalNodes || 0,
+              textNodes: message.payload.textNodes || 0,
+              nodeIds: message.payload.nodeIds || []
+            };
+            this.updateUI();
+            this.showNotification(`已选择 ${message.payload.textNodes} 个文本节点`, 'success');
+            break;
+            
           case 'translation-progress':
             this.updateProgress(message.payload.progress, message.payload.status);
             break;
@@ -1604,6 +1662,65 @@
             }
             break;
             
+          case 'rollback-complete':
+            const { successCount, failureCount } = message.payload;
+            if (successCount > 0) {
+              // Update the applied status of rollback results and mark as reverted
+              appState.results.forEach(result => {
+                if (result.applied && result.status === 'success') {
+                  result.applied = false;
+                  result.reverted = true; // 标记为已回退状态
+                }
+              });
+              this.renderResults();
+              this.showNotification(`回退完成！成功回退 ${successCount} 个翻译`, 'success');
+            }
+            if (failureCount > 0) {
+              this.showNotification(`有 ${failureCount} 个翻译回退失败`, 'error');
+            }
+            break;
+            
+          case 'update-translation-result':
+            const updateResult = message.payload;
+            if (updateResult.success) {
+              this.showNotification('翻译已更新到Figma', 'success');
+            } else {
+              this.showNotification(`翻译更新失败: ${updateResult.error}`, 'error');
+            }
+            break;
+            
+          case 'apply-result':
+            const applyResult = message.payload;
+            if (!applyResult.nodeId) {
+              console.error('apply-result missing nodeId:', applyResult);
+              return;
+            }
+            
+            const resultIndex = appState.results.findIndex(r => r.nodeId === applyResult.nodeId);
+            if (resultIndex !== -1) {
+              if (applyResult.success) {
+                appState.results[resultIndex].applied = true;
+                // 清除回退状态（如果有的话）
+                if (appState.results[resultIndex].reverted) {
+                  appState.results[resultIndex].reverted = false;
+                }
+                this.renderResults();
+                this.showNotification('翻译应用成功！', 'success');
+              } else {
+                this.showNotification('应用失败: ' + (applyResult.error || 'Unknown error'), 'error');
+              }
+              
+              // 恢复对应的重试按钮状态
+              setTimeout(() => {
+                const retryBtns = document.querySelectorAll(`button[onclick*="retryApplyTranslation(${resultIndex})"]`);
+                retryBtns.forEach(btn => {
+                  btn.disabled = false;
+                  btn.innerHTML = appState.results[resultIndex].reverted ? '📝 Re-apply' : '🔄 Retry';
+                });
+              }, 100);
+            }
+            break;
+            
           case 'error':
             this.showNotification(message.payload.error, 'error');
             if (appState.isTranslating) {
@@ -1627,6 +1744,90 @@
         } else {
           this.showNotification('无法定位节点：节点ID缺失', 'error');
         }
+      },
+      
+      // 一键回退所有翻译功能
+      rollbackAllTranslations() {
+        if (!appState.results || appState.results.length === 0) {
+          this.showNotification('没有可回退的翻译结果', 'error');
+          return;
+        }
+        
+        const appliedResults = appState.results.filter(result => result.applied && result.status === 'success');
+        if (appliedResults.length === 0) {
+          this.showNotification('没有已应用的翻译需要回退', 'error');
+          return;
+        }
+        
+        if (!confirm(`确认回退 ${appliedResults.length} 个已应用的翻译？此操作会将文本恢复到翻译前的状态。`)) {
+          return;
+        }
+        
+        this.postMessage('rollback-all-translations', {
+          results: appliedResults.map(result => ({
+            nodeId: result.nodeId,
+            originalText: result.originalText
+          }))
+        });
+        
+        this.showNotification('正在回退所有翻译...', 'success');
+      },
+      
+      // 处理翻译结果手动编辑
+      handleTranslationEdit(element, index) {
+        const newTranslation = element.textContent.trim();
+        const oldTranslation = appState.results[index].translatedText;
+        
+        if (newTranslation === oldTranslation) {
+          return; // 没有变化
+        }
+        
+        if (newTranslation === '') {
+          this.showNotification('翻译结果不能为空', 'error');
+          element.textContent = oldTranslation; // 恢复原值
+          return;
+        }
+        
+        // 检查是否有相同的原始文本，提供批量修改选项
+        const sameOriginalResults = appState.results.filter(
+          (result, idx) => idx !== index && 
+          result.originalText === appState.results[index].originalText &&
+          result.status === 'success'
+        );
+        
+        if (sameOriginalResults.length > 0) {
+          const applyToAll = confirm(
+            `发现还有 ${sameOriginalResults.length} 个相同的原始文本"${appState.results[index].originalText}"。\n\n是否将此翻译应用到所有相同文本？\n\n点击"确定"批量应用，点击"取消"仅修改当前项。`
+          );
+          
+          if (applyToAll) {
+            // 批量更新所有相同原始文本的翻译
+            sameOriginalResults.forEach(result => {
+              const resultIndex = appState.results.findIndex(r => r.nodeId === result.nodeId);
+              if (resultIndex !== -1) {
+                appState.results[resultIndex].translatedText = newTranslation;
+              }
+            });
+            this.showNotification(`已批量更新 ${sameOriginalResults.length + 1} 个翻译结果`, 'success');
+          }
+        }
+        
+        // 更新当前结果
+        appState.results[index].translatedText = newTranslation;
+        appState.results[index].manuallyEdited = true;
+        
+        // 如果已应用，更新Figma中的翻译
+        if (appState.results[index].applied) {
+          this.postMessage('update-translation', {
+            nodeId: appState.results[index].nodeId,
+            translatedText: newTranslation,
+            mode: document.getElementById('output-mode').value || 'replace'
+          });
+          this.showNotification('翻译已自动应用到Figma', 'success');
+        }
+        
+        // 重新渲染结果以反映批量更新
+        this.renderResults();
       },
       
       // Utilities

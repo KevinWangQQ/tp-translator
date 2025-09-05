@@ -1,0 +1,30 @@
+{
+  "name": "Advanced Figma Translator",
+  "id": "advanced-figma-translator-v1",
+  "api": "1.0.0",
+  "main": "code.js",
+  "ui": "ui.html",
+  "menu": [
+    {
+      "name": "🌍 Advanced Translator",
+      "command": "open-translator"
+    },
+    {
+      "name": "⚡ Quick Translate",
+      "command": "quick-translate"
+    }
+  ],
+  "capabilities": [],
+  "enableProposedApi": false,
+  "editorType": ["figma"],
+  "documentAccess": "dynamic-page",
+  "networkAccess": {
+    "allowedDomains": [
+      "https://api.openai.com",
+      "https://generativelanguage.googleapis.com"
+    ]
+  },
+  "permissions": [
+    "currentuser"
+  ]
+}

@@ -1,0 +1,331 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>TP Translator v1.2.0 - 测试版</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      font-size: 14px;
+      background: #f5f5f5;
+      color: #1a1a1a;
+      height: 100vh;
+      overflow: hidden;
+    }
+    
+    .app {
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      background: #f5f5f5;
+    }
+    
+    .header {
+      background: #fff;
+      border-bottom: 1px solid #e1e4e8;
+      padding: 12px 16px;
+      flex-shrink: 0;
+    }
+    
+    .logo { 
+      display: flex; 
+      align-items: center; 
+      gap: 8px; 
+      font-weight: 600; 
+      color: #0366d6; 
+    }
+    
+    .content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px;
+    }
+    
+    .section {
+      background: #fff;
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 16px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    
+    .select {
+      width: 100%;
+      padding: 8px 12px;
+      border: 1px solid #d1d5da;
+      border-radius: 4px;
+      font-size: 14px;
+      background: #fff;
+    }
+    
+    .btn-primary {
+      background: #28a745;
+      color: #fff;
+      padding: 10px 16px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+    }
+    
+    .btn-primary:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    
+    .result-item {
+      background: #fff;
+      border: 1px solid #e1e4e8;
+      border-radius: 6px;
+      padding: 12px;
+      margin-bottom: 12px;
+    }
+    
+    .result-item.success {
+      border-color: #28a745;
+      background: #f8fff8;
+    }
+    
+    .result-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+    }
+    
+    .btn-small {
+      padding: 4px 8px;
+      font-size: 12px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    
+    /* 强制显示定位按钮 */
+    .locate-btn {
+      background: #17a2b8 !important;
+      color: #fff !important;
+      border: 1px solid #17a2b8 !important;
+    }
+    
+    .locate-btn:hover {
+      background: #138496 !important;
+    }
+    
+    .notification {
+      position: fixed;
+      top: 16px;
+      right: 16px;
+      padding: 12px 16px;
+      border-radius: 6px;
+      font-size: 13px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+      z-index: 1000;
+      display: none;
+    }
+    
+    .notification.success {
+      background: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+    
+    .notification.error {
+      background: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+    
+    .notification.active {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <div id="root">
+    <div class="app">
+      <header class="header">
+        <div class="logo">
+          <span style="font-size: 18px;">🔌</span>
+          <span>TP Translator v1.2.0</span>
+        </div>
+      </header>
+      
+      <div class="content">
+        <section class="section">
+          <h3>翻译引擎</h3>
+          <select id="engine">
+            <option value="gemini">Google Gemini (gemini-pro)</option>
+            <option value="openai">OpenAI (gpt-3.5-turbo)</option>
+          </select>
+        </section>
+        
+        <section class="section">
+          <button class="btn-primary" id="test-btn" onclick="testTranslation()">
+            🧪 测试翻译功能
+          </button>
+        </section>
+        
+        <section class="section" id="results-section" style="display: none;">
+          <h3>翻译结果</h3>
+          <div id="results-container"></div>
+        </section>
+      </div>
+    </div>
+  </div>
+  
+  <div class="notification" id="notification"></div>
+
+  <script>
+    console.log('TP Translator v1.2.0 测试版本加载中...');
+    
+    // 全局状态
+    const appState = {
+      connected: false,
+      results: []
+    };
+    
+    // 显示通知
+    function showNotification(message, type) {
+      const notification = document.getElementById('notification');
+      notification.textContent = message;
+      notification.className = `notification ${type} active`;
+      
+      setTimeout(() => {
+        notification.classList.remove('active');
+      }, 3000);
+    }
+    
+    // 测试翻译功能
+    function testTranslation() {
+      const engine = document.getElementById('engine').value;
+      showNotification(`选择了引擎: ${engine}`, 'success');
+      
+      // 模拟翻译结果
+      const mockResult = {
+        nodeId: 'test-node-123',
+        originalText: '使用此条例',
+        translatedText: 'Use this condition',
+        status: 'success',
+        applied: false
+      };
+      
+      appState.results = [mockResult];
+      renderResults();
+      document.getElementById('results-section').style.display = 'block';
+      
+      showNotification('模拟翻译完成！请检查节点定位按钮', 'success');
+    }
+    
+    // 渲染结果
+    function renderResults() {
+      const container = document.getElementById('results-container');
+      
+      container.innerHTML = appState.results.map((result, index) => `
+        <div class="result-item ${result.status}">
+          <div style="margin-bottom: 8px;">
+            <strong>原文:</strong> ${result.originalText}
+          </div>
+          <div style="margin-bottom: 8px;">
+            <strong>译文:</strong> ${result.translatedText}
+          </div>
+          
+          <!-- 这里是关键 - 强制显示定位按钮 -->
+          <div class="result-actions">
+            <button class="btn-small" style="background: #6c757d; color: #fff;" 
+                    onclick="applyTranslation(${index})">
+              应用翻译
+            </button>
+            <button class="btn-small" style="background: #6c757d; color: #fff;" 
+                    onclick="copyTranslation(${index})">
+              复制译文
+            </button>
+            
+            <!-- 节点定位按钮 - 无条件显示 -->
+            <button class="btn-small locate-btn" onclick="locateNode(${index})" 
+                    title="在Figma中定位此文本">
+              🎯 定位
+            </button>
+          </div>
+        </div>
+      `).join('');
+    }
+    
+    // 应用翻译
+    function applyTranslation(index) {
+      showNotification(`应用翻译 #${index + 1}`, 'success');
+    }
+    
+    // 复制翻译
+    function copyTranslation(index) {
+      const result = appState.results[index];
+      if (result && result.translatedText) {
+        navigator.clipboard.writeText(result.translatedText).then(() => {
+          showNotification('译文已复制到剪贴板', 'success');
+        }).catch(() => {
+          showNotification('复制失败', 'error');
+        });
+      }
+    }
+    
+    // 定位节点 - 关键功能
+    function locateNode(index) {
+      const result = appState.results[index];
+      if (result && result.nodeId) {
+        showNotification(`正在定位节点: ${result.nodeId}`, 'success');
+        
+        // 向主线程发送定位消息
+        parent.postMessage({
+          pluginMessage: {
+            type: 'locate-node',
+            payload: { nodeId: result.nodeId }
+          }
+        }, '*');
+      } else {
+        showNotification('无法定位节点：节点ID缺失', 'error');
+      }
+    }
+    
+    // 监听来自主线程的消息
+    window.addEventListener('message', (event) => {
+      const message = event.data.pluginMessage;
+      if (message) {
+        console.log('收到消息:', message.type, message);
+        
+        switch (message.type) {
+          case 'plugin-ready':
+            appState.connected = true;
+            showNotification('插件已连接 - v1.2.0测试版', 'success');
+            break;
+            
+          case 'locate-result':
+            if (message.payload.success) {
+              showNotification('节点定位成功！', 'success');
+            } else {
+              showNotification(`定位失败: ${message.payload.error}`, 'error');
+            }
+            break;
+            
+          default:
+            console.log('未知消息类型:', message.type);
+        }
+      }
+    });
+    
+    // 初始化
+    setTimeout(() => {
+      console.log('尝试连接到插件...');
+      parent.postMessage({
+        pluginMessage: {
+          type: 'get-selection',
+          payload: {}
+        }
+      }, '*');
+    }, 500);
+    
+    console.log('TP Translator v1.2.0 测试版本初始化完成');
+  </script>
+</body>
+</html>

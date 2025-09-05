@@ -1,0 +1,478 @@
+<!doctype html><html><head><meta charset="utf-8"><title>Advanced Translator</title><style>* { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      font-size: 14px;
+      background: #f5f5f5;
+      height: 100vh;
+    }
+    
+    .app {
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .header {
+      background: #fff;
+      border-bottom: 1px solid #e1e4e8;
+      padding: 16px;
+      flex-shrink: 0;
+    }
+    
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 600;
+      color: #0366d6;
+    }
+    
+    .content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px;
+    }
+    
+    .section {
+      background: #fff;
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 16px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 16px;
+      color: #24292e;
+    }
+    
+    .selection-info {
+      display: flex;
+      gap: 24px;
+      margin-bottom: 16px;
+    }
+    
+    .stat {
+      text-align: center;
+    }
+    
+    .stat-value {
+      display: block;
+      font-size: 24px;
+      font-weight: 600;
+      color: #0366d6;
+    }
+    
+    .stat-label {
+      font-size: 12px;
+      color: #586069;
+    }
+    
+    .options-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+    
+    .option-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    
+    .option-label {
+      font-size: 12px;
+      font-weight: 500;
+      color: #24292e;
+    }
+    
+    .select, .input {
+      padding: 8px 12px;
+      border: 1px solid #d1d5da;
+      border-radius: 4px;
+      font-size: 14px;
+      background: #fff;
+    }
+    
+    .select:focus, .input:focus {
+      outline: none;
+      border-color: #0366d6;
+      box-shadow: 0 0 0 2px rgba(3,102,214,0.1);
+    }
+    
+    .btn {
+      padding: 8px 16px;
+      border-radius: 4px;
+      border: none;
+      font-size: 14px;
+      cursor: pointer;
+      font-weight: 500;
+      margin-right: 8px;
+      margin-bottom: 8px;
+    }
+    
+    .btn-primary {
+      background: #28a745;
+      color: #fff;
+    }
+    
+    .btn-primary:hover { background: #218838; }
+    
+    .btn-secondary {
+      background: #6c757d;
+      color: #fff;
+    }
+    
+    .btn-secondary:hover { background: #5a6268; }
+    
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    
+    .progress-section {
+      margin-top: 16px;
+    }
+    
+    .progress-bar {
+      height: 6px;
+      background: #e1e4e8;
+      border-radius: 3px;
+      overflow: hidden;
+      margin-bottom: 8px;
+    }
+    
+    .progress-fill {
+      height: 100%;
+      background: #28a745;
+      transition: width 0.3s ease;
+    }
+    
+    .progress-text {
+      font-size: 12px;
+      color: #586069;
+      text-align: center;
+    }
+    
+    .result-item {
+      border: 1px solid #e1e4e8;
+      border-radius: 6px;
+      padding: 12px;
+      margin-bottom: 12px;
+    }
+    
+    .result-item.success { border-color: #28a745; }
+    .result-item.error { border-color: #dc3545; }
+    
+    .result-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+    
+    .result-index {
+      font-weight: 600;
+      color: #0366d6;
+    }
+    
+    .result-status {
+      font-size: 12px;
+      padding: 2px 6px;
+      border-radius: 3px;
+    }
+    
+    .result-status.success { background: #d4edda; color: #155724; }
+    .result-status.error { background: #f8d7da; color: #721c24; }
+    
+    .text-content {
+      background: #f6f8fa;
+      padding: 8px;
+      border-radius: 4px;
+      margin-top: 4px;
+      font-size: 13px;
+      line-height: 1.4;
+    }
+    
+    .notification {
+      position: fixed;
+      top: 16px;
+      right: 16px;
+      padding: 12px 16px;
+      border-radius: 6px;
+      font-size: 14px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+      z-index: 1000;
+      display: none;
+    }
+    
+    .notification.success {
+      background: #d4edda;
+      border: 1px solid #c3e6cb;
+      color: #155724;
+    }
+    
+    .notification.error {
+      background: #f8d7da;
+      border: 1px solid #f5c6cb;
+      color: #721c24;
+    }
+    
+    .status-connected {
+      color: #28a745;
+    }
+    
+    .status-disconnected {
+      color: #dc3545;
+    }</style></head><body><div id="root"><div class="app"><header class="header"><div class="logo"><span>🌍</span> <span>Advanced Translator</span> <span id="connection-status" class="status-disconnected">(连接中...)</span></div></header><div class="content"><div class="section"><h3 class="section-title"><span>📋</span> <span>选择信息</span></h3><div class="selection-info"><div class="stat"><span class="stat-value" id="total-nodes">0</span> <span class="stat-label">总节点</span></div><div class="stat"><span class="stat-value" id="text-nodes">0</span> <span class="stat-label">文本节点</span></div></div><button class="btn btn-secondary" onclick="refreshSelection()">🔄 刷新选择</button></div><div class="section"><h3 class="section-title"><span>⚙️</span> <span>翻译选项</span></h3><div class="options-grid"><div class="option-group"><label class="option-label">翻译引擎</label> <select class="select" id="engine"><option value="openai">OpenAI GPT</option><option value="gemini">Google Gemini</option></select></div><div class="option-group"><label class="option-label">API密钥</label> <input type="password" class="input" id="api-key" placeholder="输入API密钥"></div><div class="option-group"><label class="option-label">源语言</label> <select class="select" id="source-lang"><option value="auto">自动检测</option><option value="en">英语</option><option value="zh-CN">中文(简体)</option><option value="ja">日语</option><option value="ko">韩语</option></select></div><div class="option-group"><label class="option-label">目标语言</label> <select class="select" id="target-lang"><option value="zh-CN" selected="selected">中文(简体)</option><option value="en">英语</option><option value="ja">日语</option><option value="ko">韩语</option></select></div></div><div class="option-group"><label class="option-label">输出模式</label> <select class="select" id="output-mode"><option value="replace">替换原文</option><option value="beside">原文旁边</option><option value="newFrame">新建框架</option><option value="newPage">新建页面</option></select></div></div><div class="section"><h3 class="section-title"><span>🚀</span> <span>翻译操作</span></h3><button class="btn btn-primary" id="start-btn" onclick="startTranslation()" disabled="disabled">开始翻译</button> <button class="btn btn-secondary" onclick="testEngine()">测试引擎</button><div class="progress-section" id="progress-section" style="display: none;"><div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width: 0%"></div></div><div class="progress-text" id="progress-text">翻译进度: 0%</div></div></div><div class="section" id="results-section" style="display: none;"><h3 class="section-title"><span>📄</span> <span>翻译结果</span></h3><div id="results-container"></div></div></div></div></div><div class="notification" id="notification"></div><script>console.log('Advanced Translator UI loading...');
+    
+    // 应用状态
+    let appState = {
+      connected: false,
+      isTranslating: false,
+      selection: { totalNodes: 0, textNodes: 0, nodeIds: [] },
+      results: []
+    };
+    
+    // 更新UI元素
+    function updateUI() {
+      document.getElementById('total-nodes').textContent = appState.selection.totalNodes;
+      document.getElementById('text-nodes').textContent = appState.selection.textNodes;
+      
+      const startBtn = document.getElementById('start-btn');
+      const hasSelection = appState.selection.textNodes > 0;
+      const hasApiKey = document.getElementById('api-key').value.trim() !== '';
+      
+      startBtn.disabled = !hasSelection || !hasApiKey || appState.isTranslating;
+      startBtn.textContent = appState.isTranslating ? '🔄 翻译中...' : '🚀 开始翻译';
+      
+      // 连接状态
+      const statusEl = document.getElementById('connection-status');
+      if (appState.connected) {
+        statusEl.textContent = '(已连接)';
+        statusEl.className = 'status-connected';
+      } else {
+        statusEl.textContent = '(未连接)';
+        statusEl.className = 'status-disconnected';
+      }
+    }
+    
+    // 显示通知
+    function showNotification(message, type) {
+      const notification = document.getElementById('notification');
+      notification.textContent = message;
+      notification.className = 'notification ' + type;
+      notification.style.display = 'block';
+      
+      setTimeout(function() {
+        notification.style.display = 'none';
+      }, 3000);
+    }
+    
+    // 发送消息到主线程
+    function postMessage(type, payload) {
+      const message = { type: type, payload: payload || {} };
+      console.log('发送消息:', message);
+      parent.postMessage({ pluginMessage: message }, '*');
+    }
+    
+    // 刷新选择
+    function refreshSelection() {
+      console.log('刷新选择信息');
+      postMessage('get-selection');
+    }
+    
+    // 测试引擎
+    function testEngine() {
+      const engine = document.getElementById('engine').value;
+      const apiKey = document.getElementById('api-key').value.trim();
+      
+      if (!apiKey) {
+        showNotification('请输入API密钥', 'error');
+        return;
+      }
+      
+      console.log('测试引擎:', engine);
+      postMessage('test-engine', {
+        engine: engine,
+        config: { apiKey: apiKey }
+      });
+    }
+    
+    // 开始翻译
+    function startTranslation() {
+      const engine = document.getElementById('engine').value;
+      const apiKey = document.getElementById('api-key').value.trim();
+      const sourceLang = document.getElementById('source-lang').value;
+      const targetLang = document.getElementById('target-lang').value;
+      const mode = document.getElementById('output-mode').value;
+      
+      if (!apiKey) {
+        showNotification('请输入API密钥', 'error');
+        return;
+      }
+      
+      if (appState.selection.textNodes === 0) {
+        showNotification('请先选择包含文本的节点', 'error');
+        return;
+      }
+      
+      console.log('开始翻译:', { engine, sourceLang, targetLang, mode });
+      
+      appState.isTranslating = true;
+      appState.results = [];
+      updateUI();
+      
+      document.getElementById('progress-section').style.display = 'block';
+      document.getElementById('results-section').style.display = 'block';
+      document.getElementById('results-container').innerHTML = '';
+      
+      postMessage('start-translation', {
+        engine: engine,
+        sourceLang: sourceLang,
+        targetLang: targetLang,
+        mode: mode,
+        nodeIds: appState.selection.nodeIds,
+        config: { apiKey: apiKey }
+      });
+    }
+    
+    // 更新进度
+    function updateProgress(progress) {
+      document.getElementById('progress-fill').style.width = progress + '%';
+      document.getElementById('progress-text').textContent = '翻译进度: ' + Math.round(progress) + '%';
+    }
+    
+    // 添加翻译结果
+    function addResult(result) {
+      appState.results.push(result);
+      
+      const container = document.getElementById('results-container');
+      const resultEl = document.createElement('div');
+      resultEl.className = 'result-item ' + result.status;
+      
+      resultEl.innerHTML = `
+        <div class="result-header">
+          <span class="result-index">${appState.results.length}</span>
+          <span class="result-status ${result.status}">
+            ${result.status === 'success' ? '✅ 成功' : '❌ 失败'}
+          </span>
+        </div>
+        <div>
+          <label>原文:</label>
+          <div class="text-content">${escapeHtml(result.originalText)}</div>
+        </div>
+        ${result.translatedText ? `
+          <div>
+            <label>译文:</label>
+            <div class="text-content">${escapeHtml(result.translatedText)}</div>
+          </div>
+        ` : ''}
+        ${result.error ? `
+          <div>
+            <label>错误:</label>
+            <div class="text-content" style="background: #f8d7da;">${escapeHtml(result.error)}</div>
+          </div>
+        ` : ''}
+      `;
+      
+      container.appendChild(resultEl);
+      resultEl.scrollIntoView({ behavior: 'smooth' });
+    }
+    
+    // HTML转义
+    function escapeHtml(text) {
+      if (!text) return '';
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+    
+    // 处理来自主线程的消息
+    function handleMessage(message) {
+      console.log('收到消息:', message.type, message);
+      
+      switch (message.type) {
+        case 'plugin-ready':
+          appState.connected = true;
+          updateUI();
+          showNotification('插件已连接', 'success');
+          // 自动获取选择信息
+          setTimeout(refreshSelection, 100);
+          break;
+          
+        case 'selection-info':
+          appState.selection = {
+            totalNodes: message.payload.totalNodes || 0,
+            textNodes: message.payload.textNodes || 0,
+            nodeIds: message.payload.nodeIds || []
+          };
+          updateUI();
+          break;
+          
+        case 'translation-progress':
+          updateProgress(message.payload.progress);
+          break;
+          
+        case 'translation-result':
+          addResult(message.payload);
+          break;
+          
+        case 'translation-complete':
+          appState.isTranslating = false;
+          updateUI();
+          updateProgress(100);
+          showNotification(
+            `翻译完成！成功 ${message.payload.successCount} 个，失败 ${message.payload.failureCount} 个`, 
+            'success'
+          );
+          break;
+          
+        case 'engine-test-result':
+          if (message.payload.success) {
+            showNotification(message.payload.engine + ' 连接测试成功', 'success');
+          } else {
+            showNotification(message.payload.engine + ' 连接测试失败: ' + message.payload.error, 'error');
+          }
+          break;
+          
+        case 'error':
+          showNotification(message.payload.error, 'error');
+          if (appState.isTranslating) {
+            appState.isTranslating = false;
+            updateUI();
+          }
+          break;
+          
+        default:
+          console.log('未知消息类型:', message.type);
+      }
+    }
+    
+    // 监听来自主线程的消息
+    window.addEventListener('message', function(event) {
+      if (event.data.pluginMessage) {
+        handleMessage(event.data.pluginMessage);
+      }
+    });
+    
+    // API密钥输入监听
+    document.getElementById('api-key').addEventListener('input', updateUI);
+    
+    // 初始化
+    updateUI();
+    
+    // 尝试连接到插件
+    setTimeout(function() {
+      console.log('尝试连接到插件...');
+      postMessage('get-selection');
+    }, 500);
+    
+    console.log('Advanced Translator UI initialized');</script></body></html>

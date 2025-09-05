@@ -1,0 +1,4335 @@
+<!doctype html><html><head><meta charset="utf-8"><title>TP Translator</title><style>* { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Inter', sans-serif;
+      font-size: 13px;
+      background: #ffffff;
+      color: #1a1a1a;
+      height: 100vh;
+      line-height: 1.4;
+    }
+    
+    .app {
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      max-width: 380px;
+      margin: 0 auto;
+    }
+    
+    /* Header */
+    .header {
+      background: #ffffff;
+      border-bottom: 1px solid #e5e7eb;
+      padding: 16px 20px 12px;
+      flex-shrink: 0;
+    }
+    
+    .logo-section {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+    
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .logo-icon {
+      width: 24px;
+      height: 24px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    
+    .logo-text {
+      font-size: 16px;
+      font-weight: 600;
+      color: #1a1a1a;
+    }
+    
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .settings-btn {
+      background: none;
+      border: none;
+      padding: 6px;
+      border-radius: 4px;
+      cursor: pointer;
+      color: #6b7280;
+      font-size: 16px;
+    }
+    
+    .settings-btn:hover {
+      background: #f3f4f6;
+      color: #374151;
+    }
+    
+    .settings-btn.active {
+      background: #e0e7ff;
+      color: #4338ca;
+    }
+    
+    /* Navigation */
+    .nav-tabs {
+      display: flex;
+      background: #f9fafb;
+      border-radius: 8px;
+      padding: 2px;
+      gap: 2px;
+    }
+    
+    .nav-tab {
+      flex: 1;
+      background: none;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      color: #6b7280;
+    }
+    
+    .nav-tab.active {
+      background: #ffffff;
+      color: #1a1a1a;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    }
+    
+    .nav-tab:hover:not(.active) {
+      color: #374151;
+    }
+    
+    /* Content */
+    .content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px;
+    }
+    
+    .page {
+      display: none;
+    }
+    
+    .page.active {
+      display: block;
+    }
+    
+    /* Settings Modal - 强制设置，脱离父容器限制 */
+    .settings-modal {
+      position: fixed !important;
+      top: 0 !important;
+      left: 0 !important;
+      right: 0 !important;
+      bottom: 0 !important;
+      background: rgba(0, 0, 0, 0.5) !important;
+      display: none;
+      align-items: center !important;
+      justify-content: center !important;
+      z-index: 1000 !important;
+      padding: 20px !important;
+      box-sizing: border-box !important;
+      /* 重要：脱离父容器的max-width限制 */
+      width: 100vw !important;
+      max-width: none !important;
+    }
+    
+    .settings-modal.active {
+      display: flex;
+    }
+    
+    .settings-content {
+      background: white;
+      border-radius: 12px;
+      width: 90% !important;
+      max-width: 800px !important;
+      min-width: 650px !important;
+      max-height: 90vh !important;
+      min-height: 550px !important;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+      overflow: hidden;
+      /* 确保脱离父容器限制 */
+      position: relative !important;
+      z-index: 1001 !important;
+    }
+    
+    .settings-header {
+      padding: 20px 24px 16px;
+      border-bottom: 1px solid #e5e7eb;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-shrink: 0;
+    }
+    
+    .settings-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: #1a1a1a;
+    }
+    
+    .close-btn {
+      background: none;
+      border: none;
+      font-size: 24px;
+      color: #6b7280;
+      cursor: pointer;
+      padding: 4px;
+      border-radius: 4px;
+    }
+    
+    .close-btn:hover {
+      background: #f3f4f6;
+      color: #374151;
+    }
+    
+    /* Settings Tabs */
+    .settings-tabs {
+      display: flex;
+      border-bottom: 1px solid #e5e7eb;
+      background: #f9fafb;
+      flex-shrink: 0;
+    }
+    
+    .settings-tab {
+      flex: 1;
+      background: none;
+      border: none;
+      padding: 16px 24px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      color: #6b7280;
+      border-bottom: 2px solid transparent;
+      transition: all 0.2s ease;
+    }
+    
+    .settings-tab.active {
+      color: #4338ca;
+      border-bottom-color: #4338ca;
+      background: white;
+    }
+    
+    .settings-tab:hover:not(.active) {
+      color: #374151;
+      background: #f3f4f6;
+    }
+    
+    .settings-body {
+      padding: 20px 24px;
+      flex: 1;
+      overflow-y: auto;
+      min-height: 0;
+    }
+    
+    .settings-section {
+      margin-bottom: 32px;
+    }
+    
+    .settings-section:last-child {
+      margin-bottom: 0;
+    }
+    
+    .section-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: #374151;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .section-icon {
+      font-size: 16px;
+    }
+    
+    /* Form Groups */
+    .form-group {
+      margin-bottom: 20px;
+    }
+    
+    .form-label {
+      display: block;
+      font-size: 12px;
+      font-weight: 500;
+      color: #374151;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.025em;
+    }
+    
+    .form-row {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    
+    .form-col {
+      flex: 1;
+    }
+    
+    /* Inputs */
+    .input, .select {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #d1d5db;
+      border-radius: 6px;
+      font-size: 13px;
+      background: #ffffff;
+      transition: border-color 0.2s ease;
+    }
+    
+    .input:focus, .select:focus {
+      outline: none;
+      border-color: #667eea;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+    
+    .input::placeholder {
+      color: #9ca3af;
+    }
+    
+    /* Engine Cards */
+    .engine-card {
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 16px;
+      transition: all 0.2s ease;
+    }
+    
+    .engine-card:hover {
+      border-color: #d1d5db;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    }
+    
+    .engine-card.enabled {
+      border-color: #10b981;
+      background: #f0fdf4;
+    }
+    
+    .engine-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+    
+    .engine-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    
+    .engine-logo {
+      width: 32px;
+      height: 32px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      color: white;
+      font-weight: 600;
+    }
+    
+    .engine-logo.openai {
+      background: linear-gradient(135deg, #00a67e 0%, #00d4aa 100%);
+    }
+    
+    .engine-logo.gemini {
+      background: linear-gradient(135deg, #4285f4 0%, #34a853 100%);
+    }
+    
+    .engine-details h4 {
+      font-size: 14px;
+      font-weight: 600;
+      color: #1a1a1a;
+    }
+    
+    .engine-details p {
+      font-size: 12px;
+      color: #6b7280;
+    }
+    
+    .engine-toggle {
+      position: relative;
+      display: inline-block;
+      width: 44px;
+      height: 24px;
+    }
+    
+    .engine-toggle input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    
+    .toggle-slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #cbd5e1;
+      transition: .4s;
+      border-radius: 24px;
+    }
+    
+    .toggle-slider:before {
+      position: absolute;
+      content: "";
+      height: 20px;
+      width: 20px;
+      left: 2px;
+      bottom: 2px;
+      background-color: white;
+      transition: .4s;
+      border-radius: 50%;
+    }
+    
+    input:checked + .toggle-slider {
+      background-color: #10b981;
+    }
+    
+    input:checked + .toggle-slider:before {
+      transform: translateX(20px);
+    }
+    
+    .engine-config {
+      display: none;
+      padding-top: 12px;
+      border-top: 1px solid #e5e7eb;
+    }
+    
+    .engine-config.active {
+      display: block;
+    }
+    
+    .engine-config.disabled {
+      opacity: 0.5;
+      pointer-events: none;
+    }
+    
+    /* Selection Info */
+    .selection-card {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 20px;
+    }
+    
+    .selection-stats {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+    
+    .stat-item {
+      text-align: center;
+    }
+    
+    .stat-value {
+      display: block;
+      font-size: 20px;
+      font-weight: 600;
+      color: #667eea;
+      line-height: 1.2;
+    }
+    
+    .stat-label {
+      font-size: 11px;
+      color: #64748b;
+      text-transform: uppercase;
+      letter-spacing: 0.025em;
+      margin-top: 2px;
+    }
+    
+    .selection-actions {
+      display: flex;
+      gap: 8px;
+    }
+    
+    /* Buttons */
+    .btn {
+      padding: 10px 16px;
+      border-radius: 6px;
+      border: none;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+    
+    .btn-primary {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: #ffffff;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    }
+    
+    .btn-primary:hover {
+      box-shadow: 0 2px 4px rgba(102, 126, 234, 0.3);
+      transform: translateY(-1px);
+    }
+    
+    .btn-secondary {
+      background: #ffffff;
+      color: #374151;
+      border: 1px solid #d1d5db;
+    }
+    
+    .btn-secondary:hover {
+      background: #f9fafb;
+      border-color: #9ca3af;
+    }
+    
+    .btn-small {
+      padding: 6px 12px;
+      font-size: 12px;
+    }
+    
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none !important;
+      box-shadow: none !important;
+    }
+    
+    .btn-full {
+      width: 100%;
+    }
+    
+    .btn-test {
+      background: #3b82f6;
+      color: white;
+      padding: 8px 16px;
+      font-size: 12px;
+    }
+    
+    .btn-test:hover {
+      background: #2563eb;
+    }
+    
+    .btn-test:disabled {
+      background: #9ca3af;
+    }
+    
+    .btn-warning {
+      background: #f59e0b;
+      color: white;
+      border: 1px solid #d97706;
+    }
+    
+    .btn-warning:hover {
+      background: #d97706;
+      border-color: #b45309;
+    }
+    
+    .btn-warning:disabled {
+      background: #9ca3af;
+      border-color: #6b7280;
+    }
+    
+    /* Font Mapping */
+    .font-mapping-section {
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
+    
+    .font-mapping-header {
+      background: #f9fafb;
+      padding: 12px 16px;
+      border-bottom: 1px solid #e5e7eb;
+      border-radius: 8px 8px 0 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .font-mapping-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: #374151;
+    }
+    
+    .font-mapping-content {
+      padding: 16px;
+      display: none;
+    }
+    
+    .font-mapping-content.active {
+      display: block;
+    }
+    
+    .font-weight-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    
+    .font-weight-label {
+      width: 70px;
+      font-size: 12px;
+      color: #6b7280;
+      text-align: right;
+    }
+    
+    .font-arrow {
+      color: #9ca3af;
+      font-size: 12px;
+    }
+    
+    /* Progress */
+    .progress-section {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 20px;
+      display: none;
+    }
+    
+    .progress-section.active {
+      display: block;
+    }
+    
+    .progress-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+    
+    .progress-title {
+      font-size: 13px;
+      font-weight: 500;
+      color: #374151;
+    }
+    
+    .progress-percentage {
+      font-size: 12px;
+      color: #6b7280;
+    }
+    
+    .progress-bar {
+      height: 6px;
+      background: #e5e7eb;
+      border-radius: 3px;
+      overflow: hidden;
+      margin-bottom: 8px;
+    }
+    
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+      transition: width 0.3s ease;
+      border-radius: 3px;
+    }
+    
+    .progress-status {
+      font-size: 12px;
+      color: #64748b;
+    }
+    
+    /* Results */
+    .results-section {
+      display: none;
+    }
+    
+    .results-section.active {
+      display: block;
+    }
+    
+    .result-item {
+      background: #ffffff;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 12px;
+      transition: all 0.2s ease;
+    }
+    
+    .result-item:hover {
+      border-color: #d1d5db;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    }
+    
+    .result-item.success {
+      border-color: #10b981;
+      background: #f0fdf4;
+    }
+    
+    .result-item.error {
+      border-color: #ef4444;
+      background: #fef2f2;
+    }
+    
+    .result-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+    
+    .result-index {
+      font-size: 12px;
+      font-weight: 600;
+      color: #667eea;
+    }
+    
+    .result-status {
+      font-size: 11px;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.025em;
+    }
+    
+    .result-status.success {
+      background: #d1fae5;
+      color: #065f46;
+    }
+    
+    .result-status.error {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+    
+    .result-text {
+      margin-bottom: 8px;
+    }
+    
+    .result-label {
+      font-size: 11px;
+      color: #6b7280;
+      text-transform: uppercase;
+      letter-spacing: 0.025em;
+      margin-bottom: 4px;
+    }
+    
+    .result-content {
+      background: #f8fafc;
+      padding: 10px 12px;
+      border-radius: 6px;
+      border: 1px solid #e2e8f0;
+      font-size: 13px;
+      line-height: 1.4;
+      word-break: break-word;
+    }
+    
+    .result-content.error {
+      background: #fef2f2;
+      border-color: #fecaca;
+      color: #991b1b;
+    }
+    
+    .result-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      margin-top: 12px;
+    }
+    
+    .apply-status {
+      font-size: 11px;
+      font-weight: 500;
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+    
+    .apply-status.applied {
+      background: #d1fae5;
+      color: #065f46;
+    }
+    
+    .apply-status.not-applied {
+      background: #fef3c7;
+      color: #92400e;
+    }
+    
+    /* 现代化通知系统 */
+    .notification {
+      position: fixed;
+      top: 24px;
+      right: 24px;
+      padding: 16px 20px;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 500;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+      z-index: 1100;
+      display: none;
+      max-width: 320px;
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .notification.success {
+      background: rgba(16, 185, 129, 0.9);
+      color: #ffffff;
+      border-color: rgba(16, 185, 129, 0.2);
+    }
+    
+    .notification.success::before {
+      content: '✓ ';
+      font-weight: bold;
+    }
+    
+    .notification.error {
+      background: rgba(239, 68, 68, 0.9);
+      color: #ffffff;
+      border-color: rgba(239, 68, 68, 0.2);
+    }
+    
+    .notification.error::before {
+      content: '✕ ';
+      font-weight: bold;
+    }
+    
+    .notification.info {
+      background: rgba(59, 130, 246, 0.9);
+      color: #ffffff;
+      border-color: rgba(59, 130, 246, 0.2);
+    }
+    
+    .notification.info::before {
+      content: 'ℹ ';
+      font-weight: bold;
+    }
+    
+    .notification.active {
+      display: block;
+      animation: slideInBounce 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    }
+    
+    .notification.fade-out {
+      animation: fadeOut 0.3s ease-out forwards;
+    }
+    
+    @keyframes slideInBounce {
+      0% {
+        transform: translateX(100%) scale(0.8);
+        opacity: 0;
+      }
+      60% {
+        transform: translateX(-10px) scale(1.05);
+        opacity: 0.8;
+      }
+      100% {
+        transform: translateX(0) scale(1);
+        opacity: 1;
+      }
+    }
+    
+    @keyframes fadeOut {
+      from {
+        transform: translateX(0) scale(1);
+        opacity: 1;
+      }
+      to {
+        transform: translateX(100%) scale(0.9);
+        opacity: 0;
+      }
+    }
+    
+    /* Empty States */
+    .empty-state {
+      text-align: center;
+      padding: 40px 20px;
+      color: #64748b;
+    }
+    
+    .empty-icon {
+      font-size: 32px;
+      margin-bottom: 12px;
+      opacity: 0.5;
+    }
+    
+    .empty-title {
+      font-size: 14px;
+      font-weight: 500;
+      margin-bottom: 6px;
+      color: #374151;
+    }
+    
+    .empty-description {
+      font-size: 12px;
+      line-height: 1.5;
+    }
+    
+    /* Connection Status */
+    .connection-status {
+      font-size: 11px;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-weight: 500;
+    }
+    
+    .connection-status.connected {
+      background: #d1fae5;
+      color: #065f46;
+    }
+    
+    .connection-status.disconnected {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+    
+    .connection-status.connecting {
+      background: #fef3c7;
+      color: #92400e;
+    }
+    
+    /* Settings Footer */
+    .settings-footer {
+      padding: 16px 24px;
+      border-top: 1px solid #e5e7eb;
+      background: #f9fafb;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-shrink: 0;
+      border-radius: 0 0 12px 12px;
+    }
+    
+    .settings-version {
+      font-size: 12px;
+      color: #6b7280;
+    }
+    
+    .settings-actions {
+      display: flex;
+      gap: 8px;
+    }
+    
+    /* Translation Memory */
+    .memory-item {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 6px;
+      padding: 12px;
+      margin-bottom: 8px;
+    }
+    
+    .memory-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+    
+    .memory-langs {
+      font-size: 11px;
+      color: #6b7280;
+      font-weight: 500;
+    }
+    
+    .memory-actions {
+      display: flex;
+      gap: 4px;
+    }
+    
+    .memory-text {
+      font-size: 12px;
+      line-height: 1.4;
+    }
+    
+    .memory-original {
+      color: #374151;
+      margin-bottom: 4px;
+    }
+    
+    .memory-translated {
+      color: #059669;
+    }
+    
+    /* 词库样式 */
+    .glossary-term-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px;
+      margin-bottom: 8px;
+      background: #f8fafc;
+      border-radius: 8px;
+      border: 1px solid #e2e8f0;
+    }
+    
+    .term-content {
+      display: flex;
+      align-items: center;
+      flex: 1;
+      gap: 12px;
+    }
+    
+    .term-source {
+      font-weight: 500;
+      color: #374151;
+      background: #e5e7eb;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 13px;
+    }
+    
+    .term-arrow {
+      color: #6b7280;
+      font-weight: 500;
+    }
+    
+    .term-target {
+      font-weight: 500;
+      color: #059669;
+      background: #d1fae5;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 13px;
+      cursor: text;
+      transition: all 0.2s ease;
+    }
+    
+    .term-source:hover, .term-target:hover {
+      background-color: rgba(255, 255, 255, 0.5);
+    }
+    
+    .term-source:focus, .term-target:focus {
+      outline: 2px solid #007bff;
+      outline-offset: 1px;
+    }
+    
+    .term-actions {
+      display: flex;
+      gap: 4px;
+    }
+    
+    .btn-icon-edit {
+      color: #f59e0b;
+    }
+    
+    .btn-icon-edit:hover {
+      background: #fef3c7;
+      border-color: #f59e0b;
+    }
+    
+    .btn-icon-delete {
+      color: #ef4444;
+    }
+    
+    .btn-icon-delete:hover {
+      background: #fee2e2;
+      border-color: #ef4444;
+    }
+    
+    /* 设置页面导航样式 */
+    .settings-nav {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex: 1;
+    }
+    
+    .nav-back-btn {
+      background: #f8f9fa;
+      border: 1px solid #dee2e6;
+      border-radius: 6px;
+      padding: 6px 12px;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    
+    .nav-back-btn:hover {
+      background: #e9ecef;
+    }
+    
+    .nav-breadcrumb {
+      font-weight: 600;
+      font-size: 18px;
+      color: #343a40;
+    }
+    
+    /* 设置菜单样式 */
+    .settings-menu {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    
+    .menu-item {
+      display: flex;
+      align-items: center;
+      padding: 16px;
+      border: 1px solid #e9ecef;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      background: white;
+    }
+    
+    .menu-item:hover {
+      border-color: #007bff;
+      background: #f8f9ff;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 8px rgba(0, 123, 255, 0.1);
+    }
+    
+    .menu-icon {
+      font-size: 24px;
+      margin-right: 16px;
+      min-width: 32px;
+      text-align: center;
+    }
+    
+    .menu-content {
+      flex: 1;
+    }
+    
+    .menu-title {
+      margin: 0;
+      font-size: 16px;
+      font-weight: 600;
+      color: #343a40;
+    }
+    
+    .menu-desc {
+      margin: 4px 0 0 0;
+      font-size: 13px;
+      color: #6c757d;
+    }
+    
+    .menu-arrow {
+      color: #6c757d;
+      font-size: 18px;
+      margin-left: 12px;
+    }
+    
+    /* Prompt设置样式 */
+    .prompt-display {
+      margin-bottom: 24px;
+    }
+    
+    .prompt-label {
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: #495057;
+    }
+    
+    .prompt-content {
+      background: #f8f9fa;
+      border: 1px solid #dee2e6;
+      border-radius: 6px;
+      padding: 16px;
+      font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+      font-size: 13px;
+      line-height: 1.5;
+      white-space: pre-wrap;
+      max-height: 200px;
+      overflow-y: auto;
+    }
+    
+    .base-prompt {
+      color: #495057;
+      background: #e9ecef;
+    }
+    
+    .constraint-controls {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+    
+    .prompt-preview {
+      background: #f8f9fa;
+      border: 1px solid #dee2e6;
+      border-radius: 6px;
+      padding: 16px;
+      font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+      font-size: 13px;
+      line-height: 1.5;
+      white-space: pre-wrap;
+      max-height: 300px;
+      overflow-y: auto;
+      margin-top: 12px;
+    }
+    
+    .prompt-preview-controls {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    
+    /* 过滤器样式 */
+    .filter-group {
+      margin-bottom: 24px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid #e9ecef;
+    }
+    
+    .filter-group:last-child {
+      border-bottom: none;
+    }
+    
+    .filter-group h4 {
+      margin: 0 0 12px 0;
+      font-size: 14px;
+      font-weight: 600;
+      color: #495057;
+    }
+    
+    .checkbox-label {
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      margin-bottom: 8px;
+      font-size: 14px;
+    }
+    
+    .checkbox-label input[type="checkbox"] {
+      margin-right: 8px;
+    }
+    
+    .checkmark {
+      margin-left: 8px;
+    }
+    
+    .filter-test {
+      background: #f8f9fa;
+      border: 1px solid #dee2e6;
+      border-radius: 8px;
+      padding: 16px;
+    }
+    
+    .filter-test-result {
+      margin-top: 12px;
+      padding: 12px;
+      border-radius: 6px;
+      font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+      font-size: 13px;
+      line-height: 1.4;
+    }
+    
+    .filter-test-result.passed {
+      background: #d4edda;
+      border: 1px solid #c3e6cb;
+      color: #155724;
+    }
+    
+    .filter-test-result.failed {
+      background: #f8d7da;
+      border: 1px solid #f5c6cb;
+      color: #721c24;
+    }
+    
+    /* 通用表单样式增强 */
+    .textarea {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ced4da;
+      border-radius: 6px;
+      font-size: 14px;
+      font-family: inherit;
+      resize: vertical;
+      min-height: 80px;
+    }
+    
+    .textarea:focus {
+      border-color: #007bff;
+      box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+      outline: none;
+    }
+    
+    .settings-container {
+      position: relative;
+      height: calc(100% - 140px);
+      min-height: 400px !important;
+      overflow: hidden;
+      flex: 1;
+    }
+    
+    .settings-page {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      padding: 20px;
+      overflow-y: auto;
+      transform: translateX(100%);
+      transition: transform 0.3s ease;
+      background: white;
+    }
+    
+    .settings-page.active {
+      transform: translateX(0);
+    }
+    
+    /* 确保设置模态框在所有情况下都有适当的大小 */
+    @media (max-width: 900px) {
+      .settings-content {
+        width: 95% !important;
+        min-width: 400px !important;
+        max-width: 90vw !important;
+        min-height: 450px !important;
+      }
+    }
+    
+    @media (min-width: 901px) {
+      .settings-content {
+        width: 85% !important;
+        max-width: 900px !important;
+        min-width: 750px !important;
+        min-height: 600px !important;
+      }
+    }
+    
+    /* 强制设置页面内容滚动 */
+    .settings-page {
+      max-height: 100% !important;
+      overflow-y: auto !important;
+    }
+    
+    .settings-page.slide-left {
+      transform: translateX(-100%);
+    }
+    
+    /* 约束条目样式 */
+    .constraint-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px;
+      margin-bottom: 8px;
+      background: #f8fafc;
+      border-radius: 8px;
+      border: 1px solid #e2e8f0;
+    }
+    
+    .constraint-content {
+      display: flex;
+      align-items: center;
+      flex: 1;
+      gap: 12px;
+    }
+    
+    .constraint-source {
+      font-weight: 500;
+      color: #374151;
+      background: #e5e7eb;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 13px;
+    }
+    
+    .constraint-arrow {
+      color: #6b7280;
+      font-weight: 500;
+    }
+    
+    .constraint-target {
+      font-weight: 500;
+      color: #7c3aed;
+      background: #ede9fe;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 13px;
+    }
+    
+    .constraint-type {
+      font-size: 11px;
+      color: #6b7280;
+      background: #f3f4f6;
+      padding: 2px 6px;
+      border-radius: 3px;
+    }
+    
+    /* 约束模态框样式 */
+    .constraint-modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10000;
+    }
+    
+    .constraint-modal {
+      background: white;
+      border-radius: 12px;
+      width: 500px;
+      max-width: 90vw;
+      max-height: 80vh;
+      overflow: hidden;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    }
+    
+    .constraint-modal-header {
+      padding: 20px 24px;
+      border-bottom: 1px solid #e5e7eb;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    
+    .constraint-modal-header h3 {
+      margin: 0;
+      font-size: 18px;
+      font-weight: 600;
+      color: #111827;
+    }
+    
+    .modal-close {
+      background: none;
+      border: none;
+      font-size: 24px;
+      cursor: pointer;
+      padding: 0;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 6px;
+      transition: background-color 0.2s;
+    }
+    
+    .modal-close:hover {
+      background: #f3f4f6;
+    }
+    
+    .constraint-modal-body {
+      padding: 24px;
+      max-height: 60vh;
+      overflow-y: auto;
+    }
+    
+    .constraint-modal-footer {
+      padding: 16px 24px;
+      border-top: 1px solid #e5e7eb;
+      display: flex;
+      gap: 12px;
+      justify-content: flex-end;
+    }
+    
+    .constraint-conflicts {
+      margin-top: 16px;
+    }
+    
+    .constraint-warning {
+      background: #fef3c7;
+      border: 1px solid #f59e0b;
+      border-radius: 6px;
+      padding: 12px;
+      font-size: 14px;
+      color: #92400e;
+    }
+    
+    /* 现代化图标按钮样式 */
+    .btn-icon {
+      background: #ffffff;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      width: 36px;
+      height: 36px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      margin: 0 3px;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .btn-icon:hover {
+      background: #f8fafc;
+      border-color: #cbd5e1;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+    
+    .btn-icon:active {
+      transform: translateY(0);
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    }
+    
+    .btn-icon-copy {
+      color: #3b82f6;
+    }
+    
+    .btn-icon-copy:hover {
+      background: #dbeafe;
+      border-color: #3b82f6;
+    }
+    
+    .btn-icon-glossary {
+      color: #10b981;
+    }
+    
+    .btn-icon-glossary:hover {
+      background: #d1fae5;
+      border-color: #10b981;
+    }
+    
+    .btn-icon-locate {
+      color: #8b5cf6;
+    }
+    
+    .btn-icon-locate:hover {
+      background: #ede9fe;
+      border-color: #8b5cf6;
+    }
+    
+    .btn-icon-batch {
+      color: #f59e0b;
+    }
+    
+    .btn-icon-batch:hover {
+      background: #fef3c7;
+      border-color: #f59e0b;
+    }
+    
+    /* 全局操作区域样式 */
+    .results-global-actions {
+      margin-bottom: 20px;
+      padding: 15px;
+      background: #f8fafc;
+      border-radius: 8px;
+      border: 1px solid #e2e8f0;
+    }
+    
+    .results-global-actions h3 {
+      margin: 0 0 12px 0;
+      font-size: 14px;
+      font-weight: 600;
+      color: #374151;
+    }
+    
+    .global-actions-buttons {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    
+    .global-actions-buttons .btn {
+      font-size: 13px;
+      padding: 6px 12px;
+    }
+    
+    .results-list h3 {
+      margin: 0 0 15px 0;
+      font-size: 16px;
+      font-weight: 600;
+      color: #1f2937;
+      padding-bottom: 8px;
+      border-bottom: 1px solid #e5e7eb;
+    }
+    
+    /* 可编辑翻译内容样式 */
+    .result-content-editable {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 12px;
+      min-height: 24px;
+      line-height: 1.5;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      cursor: text;
+      font-family: inherit;
+      font-size: 14px;
+    }
+    
+    .result-content-editable:hover {
+      background: #ffffff;
+      border-color: #94a3b8;
+    }
+    
+    .result-content-editable:focus {
+      outline: none;
+      background: #ffffff;
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1), 0 4px 12px rgba(0, 0, 0, 0.05);
+      transform: translateY(-1px);
+    }
+    
+    .result-content-editable:empty:before {
+      content: 'Click to edit translation...';
+      color: #94a3b8;
+      font-style: italic;
+    }
+    
+    .result-content-editable.editing {
+      border-color: #10b981;
+      background: #ffffff;
+      box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1), 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+    
+    .result-content-editable:hover:not(.editing) {
+      cursor: text;
+      border-color: #6b7280;
+    }
+    
+    .result-content-editable:hover:not(.editing):after {
+      content: '✏️ 点击编辑';
+      position: absolute;
+      top: -25px;
+      right: 0;
+      font-size: 11px;
+      color: #6b7280;
+      background: #f9fafb;
+      padding: 2px 6px;
+      border-radius: 4px;
+      pointer-events: none;
+      opacity: 0.8;
+    }
+    
+    /* SF Symbols测试区域样式 */
+    #filter-test-input {
+      font-family: -apple-system, BlinkMacSystemFont, SF Pro Display, SF Pro Text, Helvetica Neue, Arial, sans-serif !important;
+      font-feature-settings: normal !important;
+      text-rendering: optimizeLegibility !important;
+      -webkit-font-smoothing: antialiased !important;
+      letter-spacing: normal !important;
+    }
+    
+    .filter-test-result {
+      margin-top: 12px;
+      padding: 12px;
+      border-radius: 6px;
+      font-weight: 500;
+      white-space: pre-wrap;
+      font-family: -apple-system, BlinkMacSystemFont, SF Pro Display, SF Pro Text, Helvetica Neue, Arial, sans-serif;
+    }
+    
+    .filter-test-result.passed {
+      background: #dcfce7;
+      border: 1px solid #bbf7d0;
+      color: #166534;
+    }
+    
+    .filter-test-result.failed {
+      background: #fee2e2;
+      border: 1px solid #fecaca;
+      color: #dc2626;
+    }</style></head><body><div id="root"><div class="app"><header class="header"><div class="logo-section"><div class="logo"><div class="logo-icon">🔌</div><span class="logo-text">TP Translator</span></div><div class="header-actions"><span class="connection-status" id="connection-status">连接中</span> <button class="settings-btn" id="settings-btn" onclick="ui.toggleSettings()" title="设置">⚙️</button></div></div><div class="nav-tabs"><button class="nav-tab active" onclick="ui.switchTab('home')">首页</button> <button class="nav-tab" onclick="ui.switchTab('translate')">翻译结果</button></div></header><div class="content"><div class="page active" id="home-page"><div class="form-group"><label class="form-label">选中内容</label><div class="selection-card"><div class="selection-stats"><div class="stat-item"><span class="stat-value" id="total-nodes">0</span> <span class="stat-label">总数</span></div><div class="stat-item"><span class="stat-value" id="text-nodes">0</span> <span class="stat-label">文本节点</span></div></div><div class="selection-actions"><button class="btn btn-secondary btn-small" onclick="ui.refreshSelection()">🔄 刷新</button> <button class="btn btn-secondary btn-small" onclick="ui.selectAllText()">📝 选择所有文本</button></div></div></div><div class="form-group"><label class="form-label">翻译引擎</label><div class="form-row"><div class="form-col"><select class="select" id="engine"><option value="">选择引擎...</option></select></div><div class="form-col"><select class="select" id="model-select" style="display: none;"><option value="">选择模型...</option></select></div></div><div class="form-row" id="api-key-row" style="display: none; margin-top: 8px;"><div class="form-col"><input type="password" class="input" id="api-key" placeholder="输入API密钥"></div><div class="form-col" style="flex: 0 0 auto;"><button class="btn btn-secondary btn-small" onclick="ui.openEngineSettings()">⚙️ 配置</button></div></div></div><div class="form-group"><label class="form-label">语言</label><div class="form-row"><div class="form-col"><select class="select" id="source-lang"><option value="auto">自动识别</option><option value="en">英语</option><option value="zh-CN">中文（简体）</option><option value="ja">日语</option><option value="ko">韩语</option><option value="fr">法语</option><option value="de">德语</option><option value="es">西班牙语</option></select></div><div class="form-col"><select class="select" id="target-lang"><option value="en">英语</option><option value="zh-CN">中文（简体）</option><option value="ja">日语</option><option value="ko">韩语</option><option value="fr">法语</option><option value="de">德语</option><option value="es">西班牙语</option></select></div></div></div><div class="form-group"><label class="form-label">输出模式</label> <select class="select" id="output-mode"><option value="replace">替换原文本</option><option value="beside">在旁边显示</option><option value="newFrame">在新框架中显示</option><option value="newPage">在新页面中显示</option></select></div><div class="font-mapping-section"><div class="font-mapping-header"><span class="font-mapping-title">字体映射</span> <label class="engine-toggle"><input type="checkbox" id="font-mapping-enabled"> <span class="toggle-slider"></span></label></div><div class="font-mapping-content" id="font-mapping-content"><div class="font-weight-row"><span class="font-weight-label">Regular</span> <select class="select" style="flex: 1;"><option>Inter Regular</option><option>Roboto Regular</option><option>Arial Regular</option></select> <span class="font-arrow">→</span> <select class="select" style="flex: 1;"><option>Noto Sans SC Regular</option><option>PingFang SC Regular</option><option>Source Han Sans SC Regular</option></select></div><div class="font-weight-row"><span class="font-weight-label">Medium</span> <select class="select" style="flex: 1;"><option>Inter Medium</option><option>Roboto Medium</option><option>Arial Medium</option></select> <span class="font-arrow">→</span> <select class="select" style="flex: 1;"><option>Noto Sans SC Medium</option><option>PingFang SC Medium</option><option>Source Han Sans SC Medium</option></select></div><div class="font-weight-row"><span class="font-weight-label">Bold</span> <select class="select" style="flex: 1;"><option>Inter Bold</option><option>Roboto Bold</option><option>Arial Bold</option></select> <span class="font-arrow">→</span> <select class="select" style="flex: 1;"><option>Noto Sans SC Bold</option><option>PingFang SC Bold</option><option>Source Han Sans SC Bold</option></select></div></div></div><button class="btn btn-primary btn-full" id="translate-btn" onclick="ui.startTranslation()" disabled="disabled">🚀 翻译</button><div class="progress-section" id="progress-section"><div class="progress-header"><span class="progress-title">翻译中...</span> <span class="progress-percentage" id="progress-percentage">0%</span></div><div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width: 0%"></div></div><div class="progress-status" id="progress-status">初始化中...</div></div></div><div class="page" id="translate-page"><div class="results-section active" id="results-section"><div class="form-group"><label class="form-label">翻译结果</label><div id="results-container"><div class="empty-state"><div class="empty-icon">📄</div><div class="empty-title">还没有翻译结果</div><div class="empty-description">切换到首页开始翻译</div></div></div></div></div></div></div></div><div class="settings-modal" id="settings-modal"><div class="settings-content"><div class="settings-header"><div class="settings-nav"><button class="nav-back-btn" id="nav-back-btn" onclick="ui.navigateSettings('back')" style="display: none;">← Back</button><div class="nav-breadcrumb" id="nav-breadcrumb">Settings</div></div><button class="close-btn" onclick="ui.closeSettings()">×</button></div><div class="settings-container" id="settings-container"><!-- Settings Home Page --><div class="settings-page active" id="settings-home"><div class="settings-menu"><div class="menu-item" onclick="ui.navigateSettings('engines-settings')"><div class="menu-icon">🔑</div><div class="menu-content"><h3 class="menu-title">Translation Engines</h3><p class="menu-desc">Configure OpenAI and Gemini API settings</p></div><div class="menu-arrow">→</div></div><div class="menu-item" onclick="ui.navigateSettings('prompt-settings')"><div class="menu-icon">💭</div><div class="menu-content"><h3 class="menu-title">Advanced Prompts</h3><p class="menu-desc">Customize translation prompts and constraints</p></div><div class="menu-arrow">→</div></div><div class="menu-item" onclick="ui.navigateSettings('glossary-settings')"><div class="menu-icon">📚</div><div class="menu-content"><h3 class="menu-title">Glossary & Terms</h3><p class="menu-desc">Manage translation glossary and fixed terms</p></div><div class="menu-arrow">→</div></div><div class="menu-item" onclick="ui.navigateSettings('memories-settings')"><div class="menu-icon">🧠</div><div class="menu-content"><h3 class="menu-title">Translation Memory</h3><p class="menu-desc">Review and manage translation history</p></div><div class="menu-arrow">→</div></div><div class="menu-item" onclick="ui.navigateSettings('filters-settings')"><div class="menu-icon">🔍</div><div class="menu-content"><h3 class="menu-title">Content Filters</h3><p class="menu-desc">Configure what content to skip during translation</p></div><div class="menu-arrow">→</div></div><div class="menu-item" onclick="ui.navigateSettings('general-settings')"><div class="menu-icon">⚙️</div><div class="menu-content"><h3 class="menu-title">General Settings</h3><p class="menu-desc">Language preferences and general options</p></div><div class="menu-arrow">→</div></div></div></div>
+
+<!-- Translation Engines Page --><div class="settings-page" id="engines-settings"><div class="settings-section"><h3 class="section-title"><span class="section-icon">🔑</span> Translation Engines</h3><div class="engine-card" id="openai-card"><div class="engine-header"><div class="engine-info"><div class="engine-logo openai">AI</div><div class="engine-details"><h4>OpenAI</h4><p>GPT-3.5 & GPT-4 models</p></div></div><label class="engine-toggle"><input type="checkbox" id="openai-enabled"> <span class="toggle-slider"></span></label></div><div class="engine-config" id="openai-config"><div class="form-group"><label class="form-label">API Key</label> <input type="password" class="input" id="openai-key" placeholder="sk-..."></div><div class="form-group"><label class="form-label">Model</label> <select class="select" id="openai-model"><option value="gpt-3.5-turbo-instruct">GPT-3.5 Turbo Instruct</option><option value="gpt-4">GPT-4</option><option value="gpt-4-turbo">GPT-4 Turbo</option></select></div><button class="btn btn-test" onclick="ui.testEngine('openai')" id="openai-test-btn">Test Connection</button></div></div><div class="engine-card" id="gemini-card"><div class="engine-header"><div class="engine-info"><div class="engine-logo gemini">G</div><div class="engine-details"><h4>Google Gemini</h4><p>Gemini Pro & Flash models</p></div></div><label class="engine-toggle"><input type="checkbox" id="gemini-enabled"> <span class="toggle-slider"></span></label></div><div class="engine-config" id="gemini-config"><div class="form-group"><label class="form-label">API Key</label> <input type="password" class="input" id="gemini-key" placeholder="AIza..."></div><div class="form-group"><label class="form-label">Model</label> <select class="select" id="gemini-model"><option value="gemini-pro">Gemini Pro</option><option value="gemini-1.5-pro">Gemini 1.5 Pro</option><option value="gemini-1.5-flash">Gemini 1.5 Flash</option></select></div><button class="btn btn-test" onclick="ui.testEngine('gemini')" id="gemini-test-btn">Test Connection</button></div></div></div><div class="settings-section"><h3 class="section-title"><span class="section-icon">🌐</span> Default Languages</h3><div class="form-row"><div class="form-col"><label class="form-label">Default Target Language</label> <select class="select" id="default-target-lang"><option value="en">英语</option><option value="zh-CN">中文（简体）</option><option value="ja">日语</option><option value="ko">韩语</option></select></div></div></div></div><!-- Advanced Prompt Page --><div class="settings-page" id="prompt-settings"><div class="settings-section"><h3 class="section-title"><span class="section-icon">💭</span> Base Prompt System</h3><div class="prompt-display"><div class="prompt-label">Current Base Prompt (Read-only)</div><div class="prompt-content base-prompt" id="base-prompt-display">Loading base prompt...</div></div></div><div class="settings-section"><h3 class="section-title"><span class="section-icon">🎯</span> Project Context</h3><div class="form-group"><label class="form-label">Project Type</label><select class="select" id="project-type"><option value="mobile-app">Mobile App Interface</option><option value="web-admin">Web Admin Panel</option><option value="device-display">Device Display</option><option value="marketing">Marketing Material</option><option value="custom">Custom Project</option></select></div><div class="form-row"><div class="form-col"><label class="form-label">Industry</label><input type="text" class="input" id="project-industry" placeholder="e.g., E-commerce, Healthcare"></div><div class="form-col"><label class="form-label">Target Audience</label><select class="select" id="target-audience"><option value="general">General Users</option><option value="technical">Technical Users</option><option value="enterprise">Enterprise Users</option><option value="admin">Administrators</option></select></div></div><div class="form-group"><label class="form-label">Language Style</label><select class="select" id="language-style"><option value="professional">Professional</option><option value="friendly">Friendly</option><option value="concise">Concise</option><option value="detailed">Detailed</option></select></div><div class="form-group"><label class="form-label">Special Instructions</label><textarea class="textarea" id="special-instructions" rows="3" placeholder="Any specific requirements for this project..."></textarea></div></div><div class="settings-section"><h3 class="section-title"><span class="section-icon">🔒</span> Translation Constraints</h3><div class="constraint-controls"><button class="btn btn-secondary btn-small" onclick="ui.addConstraint()">+ Add Constraint</button><button class="btn btn-secondary btn-small" onclick="ui.importConstraints()">Import Rules</button></div><div id="constraints-list"><div class="empty-state"><div class="empty-icon">🔒</div><div class="empty-title">No constraints defined</div><div class="empty-description">Add constraints to ensure consistent translation of specific terms</div></div></div></div><div class="settings-section"><h3 class="section-title"><span class="section-icon">🔍</span> Prompt Preview</h3><div class="prompt-preview-controls"><input type="text" class="input" id="preview-text" placeholder="Enter test text to preview prompt..." style="margin-bottom: 10px;"><button class="btn btn-primary btn-small" onclick="ui.previewPrompt()">Generate Preview</button></div><div class="prompt-preview" id="prompt-preview-display">Enter test text above to see the final prompt that will be sent to the AI model.</div></div></div>
+
+<!-- Content Filters Page --><div class="settings-page" id="filters-settings"><div class="settings-section"><h3 class="section-title"><span class="section-icon">🔍</span> Smart Content Filtering</h3><div class="filter-group"><h4>Icon & Symbol Detection</h4><div class="form-group"><label class="checkbox-label"><input type="checkbox" id="filter-sf-symbols" checked><span class="checkmark"></span>Skip SF Symbols and system icons</label></div><div class="form-group"><label class="checkbox-label"><input type="checkbox" id="filter-font-icons" checked><span class="checkmark"></span>Skip font icons (FontAwesome, Material Icons, etc.)</label></div><div class="form-group"><label class="checkbox-label"><input type="checkbox" id="filter-unicode-private" checked><span class="checkmark"></span>Skip private Unicode area characters</label></div></div><div class="filter-group"><h4>Empty Content Detection</h4><div class="form-group"><label class="checkbox-label"><input type="checkbox" id="filter-empty-text" checked><span class="checkmark"></span>Skip pure whitespace content</label></div><div class="form-group"><label class="checkbox-label"><input type="checkbox" id="filter-single-chars" checked><span class="checkmark"></span>Skip single character text (except CJK)</label></div><div class="form-group"><label class="checkbox-label"><input type="checkbox" id="filter-placeholders"><span class="checkmark"></span>Skip placeholder text (Lorem ipsum, etc.)</label></div></div><div class="filter-group"><h4>Custom Filter Rules</h4><div class="form-group"><label class="form-label">Skip text matching patterns (one per line)</label><textarea class="textarea" id="custom-filter-patterns" rows="4" placeholder="^\\d+$&#10;^[A-Z]{2,3}$&#10;\\$\\{.*\\}"></textarea></div><div class="form-group"><label class="form-label">Skip text containing any of these words</label><input type="text" class="input" id="skip-words" placeholder="debug, test, placeholder (comma separated)"></div></div></div><div class="settings-section"><h3 class="section-title"><span class="section-icon">🧪</span> Filter Testing</h3><div class="filter-test"><div class="form-group"><label class="form-label">Test Text</label><textarea class="textarea" id="filter-test-input" rows="3" placeholder="Enter text to test filtering..."></textarea></div><button class="btn btn-primary btn-small" onclick="ui.testFilters()">Test Filters</button><div class="filter-test-result" id="filter-test-result"></div></div></div></div>
+
+<!-- General Settings Page --><div class="settings-page" id="general-settings"><div class="settings-section"><h3 class="section-title"><span class="section-icon">🌐</span> Language Settings</h3><div class="form-row"><div class="form-col"><label class="form-label">Default Target Language</label><select class="select" id="general-default-target-lang"><option value="en">英语</option><option value="zh-CN">中文（简体）</option><option value="ja">日语</option><option value="ko">韩语</option></select></div><div class="form-col"><label class="form-label">UI Language</label><select class="select" id="ui-language"><option value="en">英语</option><option value="zh-CN">中文</option></select></div></div></div><div class="settings-section"><h3 class="section-title"><span class="section-icon">⚡</span> Performance</h3><div class="form-group"><label class="form-label">Batch Size</label><select class="select" id="batch-size"><option value="1">1 (Slowest, most accurate)</option><option value="3" selected>3 (Recommended)</option><option value="5">5 (Faster)</option><option value="10">10 (Fastest, may hit rate limits)</option></select></div><div class="form-group"><label class="checkbox-label"><input type="checkbox" id="enable-caching" checked><span class="checkmark"></span>Enable translation caching</label></div></div><div class="settings-section"><h3 class="section-title"><span class="section-icon">🔄</span> Auto Actions</h3><div class="form-group"><label class="checkbox-label"><input type="checkbox" id="auto-apply-translations" checked><span class="checkmark"></span>Automatically apply translations to Figma</label></div><div class="form-group"><label class="checkbox-label"><input type="checkbox" id="auto-save-glossary"><span class="checkmark"></span>Auto-save successful translations to glossary</label></div></div></div>
+
+<div class="settings-page" id="memories-settings"><div class="settings-section"><h3 class="section-title"><span class="section-icon">🧠</span> Translation Memory</h3><div class="form-group"><div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;"><span class="form-label">Recent Translations</span> <button class="btn btn-secondary btn-small" onclick="ui.clearMemories()">Clear All</button></div><div id="translation-memories"><div class="empty-state"><div class="empty-icon">🧠</div><div class="empty-title">No translation memories</div><div class="empty-description">Your recent translations will appear here</div></div></div></div></div></div><div class="settings-page" id="glossary-settings"><div class="settings-section"><h3 class="section-title"><span class="section-icon">📚</span> Standard Glossary</h3><div class="form-group"><div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;"><span class="form-label">Add New Term</span></div><div class="form-row"><div class="form-col"><input type="text" class="input" id="glossary-source" placeholder="Source text (e.g., Hello)"></div><div class="form-col"><input type="text" class="input" id="glossary-target" placeholder="Target text (e.g., 你好)"></div><div class="form-col" style="flex: 0 0 auto;"><button class="btn btn-primary btn-small" onclick="ui.addGlossaryTerm()">+ Add</button></div></div></div><div class="form-group"><div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;"><span class="form-label">Glossary Terms</span><div style="display: flex; gap: 8px;"><button class="btn btn-secondary btn-small" onclick="ui.clearGlossary()">Clear All</button></div></div><div id="glossary-terms"><div class="empty-state"><div class="empty-icon">📚</div><div class="empty-title">No glossary terms</div><div class="empty-description">Add terms to ensure consistent translation</div></div></div></div><div class="settings-section"><h3 class="section-title"><span class="section-icon">⚙️</span> Glossary Settings</h3><div class="form-group"><label class="engine-toggle"><input type="checkbox" id="glossary-enabled" checked><span class="toggle-slider"></span></label><span style="margin-left: 12px;">Enable glossary matching during translation</span></div><div class="form-group"><label class="form-label">Match Sensitivity</label><select class="select" id="glossary-sensitivity"><option value="exact">Exact Match Only</option><option value="fuzzy" selected>Fuzzy Match (Recommended)</option><option value="partial">Partial Match</option></select></div></div></div></div><div class="settings-footer"><span class="settings-version">v2.2.1 中文版</span><div class="settings-actions"><button class="btn btn-secondary" onclick="ui.closeSettings()">Cancel</button> <button class="btn btn-primary" onclick="ui.saveSettings()">Save Settings</button></div></div></div></div></div><div class="notification" id="notification"></div><script>console.log('TP Translator with Settings UI loading...');
+    
+    // Application state - 修复默认引擎问题
+    let appState = {
+      connected: false,
+      currentTab: 'home',
+      currentSettingsTab: 'common',
+      isTranslating: false,
+      showingSettings: false,
+      selection: { totalNodes: 0, textNodes: 0, nodeIds: [] },
+      results: [],
+      fontMappingEnabled: false,
+      engines: {
+        openai: { enabled: false, apiKey: '', model: 'gpt-3.5-turbo-instruct' },
+        gemini: { enabled: true, apiKey: '', model: 'gemini-pro' }
+      },
+      settings: {
+        defaultTargetLang: 'en'
+      },
+      translationMemories: [],
+      glossary: {
+        enabled: true,
+        sensitivity: 'fuzzy',
+        terms: []
+      },
+      
+      // 新的高级设置
+      advancedPrompt: {
+        projectType: 'mobile-app',
+        industry: '',
+        targetAudience: 'general',
+        languageStyle: 'professional',
+        specialInstructions: '',
+        constraints: []
+      },
+      
+      contentFilters: {
+        skipSFSymbols: true,
+        skipFontIcons: true,
+        skipUnicodePrivate: true,
+        skipEmptyText: true,
+        skipSingleChars: true,
+        skipPlaceholders: false,
+        customPatterns: '',
+        skipWords: ''
+      },
+      
+      general: {
+        uiLanguage: 'zh-CN',
+        batchSize: 3,
+        enableCaching: true,
+        autoApplyTranslations: true,
+        autoSaveGlossary: false
+      },
+      
+      // 设置导航状态
+      settingsNavigation: {
+        currentPage: 'settings-home',
+        history: [],
+        breadcrumb: 'Settings'
+      },
+      
+      // 撤销功能状态
+      undoSystem: {
+        history: [],
+        maxHistory: 50,
+        currentSessionId: null
+      }
+    };
+    
+    // UI Controller
+    const ui = {
+      // Tab switching
+      switchTab(tabName) {
+        console.log('Switching to tab:', tabName);
+        appState.currentTab = tabName;
+        
+        // Update tab buttons
+        document.querySelectorAll('.nav-tab').forEach(tab => {
+          tab.classList.remove('active');
+        });
+        event.target.classList.add('active');
+        
+        // Update page content
+        document.querySelectorAll('.page').forEach(page => {
+          page.classList.remove('active');
+        });
+        document.getElementById(tabName + '-page').classList.add('active');
+      },
+      
+      // Settings modal
+      toggleSettings() {
+        if (appState.showingSettings) {
+          this.closeSettings();
+        } else {
+          this.showSettings();
+        }
+      },
+      
+      showSettings() {
+        appState.showingSettings = true;
+        document.getElementById('settings-modal').classList.add('active');
+        document.getElementById('settings-btn').classList.add('active');
+        this.loadSettings();
+      },
+      
+      closeSettings() {
+        appState.showingSettings = false;
+        document.getElementById('settings-modal').classList.remove('active');
+        document.getElementById('settings-btn').classList.remove('active');
+      },
+      
+      switchSettingsTab(tabName) {
+        appState.currentSettingsTab = tabName;
+        
+        // Update tab buttons
+        document.querySelectorAll('.settings-tab').forEach(tab => {
+          tab.classList.remove('active');
+        });
+        event.target.classList.add('active');
+        
+        // Update page content
+        document.querySelectorAll('.settings-page').forEach(page => {
+          page.classList.remove('active');
+        });
+        document.getElementById(tabName + '-settings').classList.add('active');
+        
+        // Initialize specific tab content
+        if (tabName === 'glossary') {
+          this.renderGlossaryTerms();
+          // Set current values
+          document.getElementById('glossary-enabled').checked = appState.glossary.enabled;
+          document.getElementById('glossary-sensitivity').value = appState.glossary.sensitivity;
+        }
+      },
+      
+      // Engine management
+      toggleEngine(engine, enabled) {
+        appState.engines[engine].enabled = enabled;
+        const card = document.getElementById(engine + '-card');
+        const config = document.getElementById(engine + '-config');
+        
+        if (enabled) {
+          card.classList.add('enabled');
+          config.classList.add('active');
+        } else {
+          card.classList.remove('enabled');
+          config.classList.remove('active');
+        }
+        
+        this.updateEngineDropdown();
+      },
+      
+      updateEngineDropdown() {
+        const select = document.getElementById('engine');
+        select.innerHTML = '';
+        
+        // 强制显示Gemini引擎（不管enabled状态）
+        const geminiOption = document.createElement('option');
+        geminiOption.value = 'gemini';
+        geminiOption.textContent = 'Google Gemini (gemini-pro)';
+        geminiOption.selected = true; // 默认选中
+        select.appendChild(geminiOption);
+        
+        // 只有启用OpenAI时才添加
+        if (appState.engines.openai.enabled) {
+          const openaiOption = document.createElement('option');
+          openaiOption.value = 'openai';
+          openaiOption.textContent = 'OpenAI GPT';
+          select.appendChild(openaiOption);
+        }
+        
+        // 如果下拉框为空，添加默认提示
+        if (select.children.length === 0) {
+          const defaultOption = document.createElement('option');
+          defaultOption.value = '';
+          defaultOption.textContent = 'Select Engine...';
+          select.appendChild(defaultOption);
+        }
+        
+        this.updateUI();
+        this.updateEngineInterface();
+      },
+
+      updateEngineInterface() {
+        const selectedEngine = document.getElementById('engine').value;
+        const modelSelect = document.getElementById('model-select');
+        const apiKeyRow = document.getElementById('api-key-row');
+        const apiKeyInput = document.getElementById('api-key');
+
+        if (!selectedEngine) {
+          modelSelect.style.display = 'none';
+          apiKeyRow.style.display = 'none';
+          return;
+        }
+
+        // Show model select and API key input
+        modelSelect.style.display = 'block';
+        apiKeyRow.style.display = 'flex';
+
+        // Populate model options
+        modelSelect.innerHTML = '<option value="">选择模型...</option>';
+        
+        if (selectedEngine === 'openai') {
+          const models = [
+            { value: 'gpt-3.5-turbo-instruct', label: 'GPT-3.5 Turbo Instruct' },
+            { value: 'gpt-4', label: 'GPT-4' },
+            { value: 'gpt-4-turbo', label: 'GPT-4 Turbo' }
+          ];
+          models.forEach(model => {
+            const option = document.createElement('option');
+            option.value = model.value;
+            option.textContent = model.label;
+            modelSelect.appendChild(option);
+          });
+        } else if (selectedEngine === 'gemini') {
+          const models = [
+            { value: 'gemini-pro', label: 'Gemini Pro' },
+            { value: 'gemini-1.5-pro', label: 'Gemini 1.5 Pro' },
+            { value: 'gemini-1.5-flash', label: 'Gemini 1.5 Flash' }
+          ];
+          models.forEach(model => {
+            const option = document.createElement('option');
+            option.value = model.value;
+            option.textContent = model.label;
+            modelSelect.appendChild(option);
+          });
+        }
+
+        // Set current values from state
+        const engineConfig = appState.engines[selectedEngine];
+        if (engineConfig) {
+          modelSelect.value = engineConfig.model;
+          apiKeyInput.value = engineConfig.apiKey;
+        }
+      },
+
+      openEngineSettings() {
+        this.showSettings();
+        // Auto-navigate to engines page
+        setTimeout(() => {
+          this.navigateSettings('engines-settings');
+        }, 100);
+      },
+      
+      // 设置页面导航系统
+      navigateSettings(page) {
+        console.log('Navigate to settings page:', page);
+        
+        if (page === 'back') {
+          // 返回上一页
+          if (appState.settingsNavigation.history.length > 0) {
+            const previousPage = appState.settingsNavigation.history.pop();
+            this.navigateSettings(previousPage);
+            return;
+          } else {
+            // 返回主页
+            page = 'settings-home';
+          }
+        }
+        
+        // 更新导航状态
+        if (page !== 'settings-home' && appState.settingsNavigation.currentPage !== page) {
+          appState.settingsNavigation.history.push(appState.settingsNavigation.currentPage);
+        }
+        
+        appState.settingsNavigation.currentPage = page;
+        
+        // 更新面包屑
+        const breadcrumbs = {
+          'settings-home': 'Settings',
+          'engines-settings': 'Settings > Translation Engines',
+          'prompt-settings': 'Settings > Advanced Prompts',
+          'glossary-settings': 'Settings > Glossary & Terms',
+          'memories-settings': 'Settings > Translation Memory', 
+          'filters-settings': 'Settings > Content Filters',
+          'general-settings': 'Settings > General Settings'
+        };
+        
+        appState.settingsNavigation.breadcrumb = breadcrumbs[page] || 'Settings';
+        document.getElementById('nav-breadcrumb').textContent = appState.settingsNavigation.breadcrumb;
+        
+        // 显示/隐藏返回按钮
+        const backBtn = document.getElementById('nav-back-btn');
+        if (page === 'settings-home') {
+          backBtn.style.display = 'none';
+        } else {
+          backBtn.style.display = 'block';
+        }
+        
+        // 切换页面
+        document.querySelectorAll('.settings-page').forEach(p => {
+          p.classList.remove('active', 'slide-left');
+        });
+        
+        const targetPage = document.getElementById(page);
+        if (targetPage) {
+          targetPage.classList.add('active');
+          
+          // 初始化页面内容
+          this.initializeSettingsPage(page);
+        }
+      },
+      
+      // 初始化设置页面内容
+      initializeSettingsPage(page) {
+        switch (page) {
+          case 'prompt-settings':
+            this.loadBasePrompt();
+            this.loadPromptSettings();
+            break;
+          case 'filters-settings':
+            this.loadFilterSettings();
+            break;
+          case 'general-settings':
+            this.loadGeneralSettings();
+            break;
+          case 'glossary-settings':
+            this.renderGlossaryTerms();
+            this.loadGlossarySettings();
+            break;
+        }
+      },
+      
+      testEngine(engine) {
+        const config = appState.engines[engine];
+        if (!config.apiKey) {
+          this.showNotification('Please enter API key first', 'error');
+          return;
+        }
+        
+        const testBtn = document.getElementById(engine + '-test-btn');
+        testBtn.disabled = true;
+        testBtn.textContent = 'Testing...';
+        
+        this.postMessage('test-engine', {
+          engine: engine,
+          config: { apiKey: config.apiKey, model: config.model }
+        });
+      },
+      
+      // Settings persistence
+      loadSettings() {
+        // Load engine settings
+        Object.keys(appState.engines).forEach(engine => {
+          const config = appState.engines[engine];
+          document.getElementById(engine + '-enabled').checked = config.enabled;
+          document.getElementById(engine + '-key').value = config.apiKey;
+          document.getElementById(engine + '-model').value = config.model;
+          
+          this.toggleEngine(engine, config.enabled);
+        });
+        
+        // Load other settings
+        document.getElementById('default-target-lang').value = appState.settings.defaultTargetLang;
+        
+        // Load translation memories
+        this.renderTranslationMemories();
+      },
+      
+      // 保存设置数据但不关闭设置页面（用于词库等操作）
+      saveSettingsData() {
+        // Save advanced prompt settings
+        this.saveAdvancedPromptSettings();
+        
+        // Save content filter settings
+        this.saveContentFilterSettings();
+        
+        // Save general settings
+        this.saveGeneralSettings();
+        
+        // Persist to Figma storage
+        this.postMessage('save-settings', {
+          engines: appState.engines,
+          settings: appState.settings,
+          translationMemories: appState.translationMemories,
+          glossary: appState.glossary,
+          advancedPrompt: appState.advancedPrompt,
+          contentFilters: appState.contentFilters,
+          general: appState.general
+        });
+      },
+
+      saveSettings() {
+        // Save engine settings
+        Object.keys(appState.engines).forEach(engine => {
+          const enabledEl = document.getElementById(engine + '-enabled');
+          const keyEl = document.getElementById(engine + '-key');
+          const modelEl = document.getElementById(engine + '-model');
+          
+          if (enabledEl && keyEl && modelEl) {
+            appState.engines[engine] = {
+              enabled: enabledEl.checked,
+              apiKey: keyEl.value.trim(),
+              model: modelEl.value
+            };
+          }
+        });
+        
+        // Save other settings
+        const targetLangEl = document.getElementById('default-target-lang');
+        if (targetLangEl) {
+          appState.settings.defaultTargetLang = targetLangEl.value;
+        }
+        
+        // Save glossary settings
+        if (document.getElementById('glossary-enabled')) {
+          appState.glossary.enabled = document.getElementById('glossary-enabled').checked;
+        }
+        if (document.getElementById('glossary-sensitivity')) {
+          appState.glossary.sensitivity = document.getElementById('glossary-sensitivity').value;
+        }
+        
+        // Update target language default
+        const mainTargetLang = document.getElementById('target-lang');
+        if (mainTargetLang) {
+          mainTargetLang.value = appState.settings.defaultTargetLang;
+        }
+        
+        this.updateEngineDropdown();
+        
+        // 保存设置数据
+        this.saveSettingsData();
+        
+        // 关闭设置页面并显示通知
+        this.closeSettings();
+        this.showNotification('设置保存成功', 'success');
+      },
+      
+      // Translation memories
+      addTranslationMemory(original, translated, sourceLang, targetLang, engine) {
+        const memory = {
+          id: Date.now(),
+          original,
+          translated,
+          sourceLang,
+          targetLang,
+          engine,
+          timestamp: new Date().toISOString()
+        };
+        
+        appState.translationMemories.unshift(memory);
+        // Keep only last 50 memories
+        appState.translationMemories = appState.translationMemories.slice(0, 50);
+        
+        this.renderTranslationMemories();
+        
+        // Auto-save translation memories
+        this.postMessage('save-settings', {
+          translationMemories: appState.translationMemories
+        });
+      },
+      
+      renderTranslationMemories() {
+        const container = document.getElementById('translation-memories');
+        
+        if (appState.translationMemories.length === 0) {
+          container.innerHTML = `
+            <div class="empty-state">
+              <div class="empty-icon">🧠</div>
+              <div class="empty-title">No translation memories</div>
+              <div class="empty-description">Your recent translations will appear here</div>
+            </div>
+          `;
+          return;
+        }
+        
+        container.innerHTML = appState.translationMemories.map(memory => `
+          <div class="memory-item">
+            <div class="memory-header">
+              <span class="memory-langs">${memory.sourceLang} → ${memory.targetLang}</span>
+              <div class="memory-actions">
+                <button class="btn btn-secondary btn-small" onclick="ui.reuseMemory('${memory.id}')">
+                  Reuse
+                </button>
+                <button class="btn btn-secondary btn-small" onclick="ui.deleteMemory('${memory.id}')">
+                  ×
+                </button>
+              </div>
+            </div>
+            <div class="memory-text">
+              <div class="memory-original">${this.escapeHtml(memory.original)}</div>
+              <div class="memory-translated">${this.escapeHtml(memory.translated)}</div>
+            </div>
+          </div>
+        `).join('');
+      },
+      
+      reuseMemory(memoryId) {
+        const memory = appState.translationMemories.find(m => m.id == memoryId);
+        if (memory) {
+          document.getElementById('source-lang').value = memory.sourceLang;
+          document.getElementById('target-lang').value = memory.targetLang;
+          
+          // Switch to engine if available
+          if (appState.engines[memory.engine] && appState.engines[memory.engine].enabled) {
+            document.getElementById('engine').value = memory.engine;
+          }
+          
+          this.closeSettings();
+          this.switchTab('home');
+          this.showNotification('Translation settings applied', 'success');
+        }
+      },
+      
+      deleteMemory(memoryId) {
+        appState.translationMemories = appState.translationMemories.filter(m => m.id != memoryId);
+        this.renderTranslationMemories();
+      },
+      
+      clearMemories() {
+        if (confirm('Clear all translation memories?')) {
+          appState.translationMemories = [];
+          this.renderTranslationMemories();
+          this.showNotification('Translation memories cleared', 'success');
+        }
+      },
+      
+      // Selection management
+      refreshSelection() {
+        console.log('Refreshing selection');
+        this.postMessage('get-selection');
+      },
+      
+      selectAllText() {
+        console.log('Selecting all text in current page');
+        this.postMessage('select-all-text');
+      },
+      
+      // Translation
+      startTranslation() {
+        const engine = document.getElementById('engine').value;
+        const model = document.getElementById('model-select').value;
+        const apiKey = document.getElementById('api-key').value.trim();
+        const sourceLang = document.getElementById('source-lang').value;
+        const targetLang = document.getElementById('target-lang').value;
+        const mode = document.getElementById('output-mode').value;
+        
+        if (!engine) {
+          this.showNotification('Please select a translation engine', 'error');
+          return;
+        }
+        
+        if (!model) {
+          this.showNotification('Please select a model', 'error');
+          return;
+        }
+        
+        if (!apiKey) {
+          this.showNotification('Please enter API key', 'error');
+          return;
+        }
+        
+        if (appState.selection.textNodes === 0) {
+          this.showNotification('Please select text nodes first', 'error');
+          return;
+        }
+        
+        console.log('Starting translation:', { engine, model, sourceLang, targetLang, mode });
+        
+        // Update engine config in state for future use
+        appState.engines[engine].apiKey = apiKey;
+        appState.engines[engine].model = model;
+        
+        appState.isTranslating = true;
+        appState.results = [];
+        appState.translationHistory = []; // 重置翻译历史
+        this.updateUI();
+        
+        // Show progress
+        document.getElementById('progress-section').classList.add('active');
+        
+        // Switch to translate tab to show results
+        this.switchTab('translate');
+        document.querySelector('.nav-tab[onclick*="translate"]').classList.add('active');
+        document.querySelector('.nav-tab[onclick*="home"]').classList.remove('active');
+        
+        this.postMessage('start-translation', {
+          engine: engine,
+          sourceLang: sourceLang,
+          targetLang: targetLang,
+          mode: mode,
+          nodeIds: appState.selection.nodeIds,
+          config: { apiKey: apiKey, model: model },
+          glossary: appState.glossary,
+          advancedPrompt: appState.advancedPrompt,
+          contentFilters: appState.contentFilters,
+          general: appState.general
+        });
+      },
+      
+      // Progress updates
+      updateProgress(progress, status) {
+        document.getElementById('progress-fill').style.width = progress + '%';
+        document.getElementById('progress-percentage').textContent = Math.round(progress) + '%';
+        document.getElementById('progress-status').textContent = status || 'Processing...';
+      },
+      
+      // Results management
+      addResult(result) {
+        appState.results.push(result);
+        this.renderResults();
+        
+        // Add to translation memory if successful
+        if (result.status === 'success' && result.originalText && result.translatedText) {
+          this.addTranslationMemory(
+            result.originalText,
+            result.translatedText,
+            document.getElementById('source-lang').value,
+            document.getElementById('target-lang').value,
+            document.getElementById('engine').value
+          );
+          
+          // 保存节点的原始状态到翻译历史
+          if (!appState.translationHistory.find(h => h.nodeId === result.nodeId)) {
+            appState.translationHistory.push({
+              nodeId: result.nodeId,
+              originalText: result.originalText,
+              timestamp: new Date().toISOString()
+            });
+          }
+        }
+      },
+      
+      renderResults() {
+        const container = document.getElementById('results-container');
+        
+        if (appState.results.length === 0) {
+          container.innerHTML = `
+            <div class="empty-state">
+              <div class="empty-icon">📄</div>
+              <div class="empty-title">还没有翻译结果</div>
+              <div class="empty-description">切换到首页开始翻译</div>
+            </div>
+          `;
+          return;
+        }
+        
+        // 添加全局操作按钮区域
+        const hasResults = appState.results.length > 0;
+        const hasSuccessResults = appState.results.some(r => r.status === 'success');
+        
+        let globalActionsHtml = '';
+        if (hasSuccessResults) {
+          globalActionsHtml = `
+            <div class="results-global-actions">
+              <h3>批量操作</h3>
+              <div class="global-actions-buttons">
+                <button class="btn btn-warning" onclick="ui.undoAllTranslations()" title="撤销本次所有翻译，恢复到翻译前状态">
+                  ↩️ 撤销本次翻译
+                </button>
+                <button class="btn btn-secondary" onclick="ui.exportTranslationResults()" title="导出翻译结果到文件">
+                  📄 导出结果
+                </button>
+                <button class="btn btn-secondary" onclick="ui.clearResults()" title="清空翻译结果列表">
+                  🗑️ 清空结果
+                </button>
+              </div>
+            </div>
+          `;
+        }
+        
+        container.innerHTML = globalActionsHtml + (hasResults ? `
+          <div class="results-list">
+            <h3>翻译结果 (${appState.results.length}项)</h3>
+            ${appState.results.map((result, index) => `
+          <div class="result-item ${result.status}">
+            <div class="result-header">
+              <span class="result-index">#${index + 1}</span>
+              <span class="result-status ${result.status}">
+                ${result.status === 'success' ? 'SUCCESS' : 'ERROR'}
+              </span>
+            </div>
+            <div class="result-text">
+              <div class="result-label">Original</div>
+              <div class="result-content">${this.escapeHtml(result.originalText)}</div>
+            </div>
+            ${result.translatedText ? `
+              <div class="result-text">
+                <div class="result-label">Translation</div>
+                <div class="result-content-editable" contenteditable="true" 
+                     data-index="${index}" 
+                     onblur="ui.updateTranslationResult(${index}, this.textContent.trim())"
+                     onkeydown="ui.handleTranslationEdit(event, ${index})"
+                     onfocus="ui.onTranslationEditFocus(event, ${index})"
+                     title="Click to edit translation (Enter to save, Esc to cancel)">${this.escapeHtml(result.translatedText)}</div>
+              </div>
+            ` : ''}
+            ${result.error ? `
+              <div class="result-text">
+                <div class="result-label">Error</div>
+                <div class="result-content error">${this.escapeHtml(result.error)}</div>
+              </div>
+            ` : ''}
+            <!-- 强制显示操作按钮 - 不管状态如何 -->
+            <div class="result-actions">
+              ${result.status === 'success' ? `
+                <span class="apply-status ${result.applied ? 'applied' : 'not-applied'}">
+                  ${result.applied ? '✅ Auto-applied' : '⚠️ Not applied'}
+                </span>
+                ${!result.applied ? `
+                  <button class="btn btn-warning btn-small" onclick="ui.retryApplyTranslation(${index})" title="重试应用翻译">
+                    🔄 Retry
+                  </button>
+                ` : ''}
+              ` : ''}
+              
+              <button class="btn-icon btn-icon-copy" onclick="ui.copyTranslation(${index})" title="复制翻译结果" aria-label="复制翻译结果">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                  <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                </svg>
+              </button>
+              
+              ${result.status === 'success' && result.originalText && result.translatedText ? `
+                <button class="btn-icon btn-icon-glossary" onclick="ui.importToGlossary('${this.escapeHtml(result.originalText).replace(/'/g, "\\'")}', '${this.escapeHtml(result.translatedText).replace(/'/g, "\\'")})" title="导入到词库" aria-label="导入到词库">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M4 19.5A2.5 2.5 0 0 1 1.5 17V7A2.5 2.5 0 0 1 4 4.5h16A2.5 2.5 0 0 1 22.5 7v10a2.5 2.5 0 0 1-2.5 2.5z"></path>
+                    <path d="M9 9h6"></path>
+                    <path d="M9 15h6"></path>
+                  </svg>
+                </button>
+              ` : ''}
+              
+              <!-- 批量修改相同文本按钮 -->
+              ${result.status === 'success' && result.originalText ? `
+                <button class="btn-icon btn-icon-batch" onclick="ui.batchEditSameText('${this.escapeHtml(result.originalText).replace(/'/g, \"\\\\'\")}')" title="批量修改所有相同原始文本的翻译" aria-label="批量修改相同文本">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                  </svg>
+                </button>
+              ` : ''}
+              
+              <!-- 节点定位按钮 - 始终显示（如果有结果） -->
+              <button class="btn-icon btn-icon-locate" onclick="ui.locateNode(${index})" title="在Figma中定位此文本" aria-label="在Figma中定位此文本">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <path d="M16.24 7.76L12 12 7.76 16.24"></path>
+                  <path d="M12 8v8"></path>
+                  <path d="M8 12h8"></path>
+                </svg>
+              </button>
+            </div>
+          </div>
+        `).join('')}
+          </div>
+        ` : '');
+      },
+      
+      // 撤销本次所有翻译
+      undoAllTranslations() {
+        if (!appState.translationHistory || appState.translationHistory.length === 0) {
+          this.showNotification('没有可撤销的翻译历史', 'warning');
+          return;
+        }
+        
+        if (confirm('确定要撤销本次所有翻译吗？这将恢复所有文本到翻译前的状态。')) {
+          this.postMessage('undo-all-translations', {
+            history: appState.translationHistory
+          });
+        }
+      },
+      
+      // 批量编辑相同原始文本的翻译
+      batchEditSameText(originalText) {
+        // 找到所有相同原始文本的结果
+        const sameTextResults = appState.results.filter(r => 
+          r.originalText === originalText && r.status === 'success'
+        );
+        
+        if (sameTextResults.length === 0) {
+          this.showNotification('未找到相同的原始文本', 'warning');
+          return;
+        }
+        
+        const currentTranslation = sameTextResults[0].translatedText || '';
+        
+        // 弹出编辑对话框
+        const newTranslation = prompt(
+          `批量修改翻译：\n\n原始文本: ${originalText}\n当前翻译: ${currentTranslation}\n\n请输入新的翻译 (共${sameTextResults.length}个相同文本将被修改):`,
+          currentTranslation
+        );
+        
+        if (newTranslation !== null && newTranslation.trim() !== '' && newTranslation !== currentTranslation) {
+          this.batchUpdateTranslations(originalText, newTranslation.trim(), sameTextResults);
+        }
+      },
+      
+      // 执行批量更新翻译
+      batchUpdateTranslations(originalText, newTranslation, results) {
+        // 更新本地结果
+        results.forEach(result => {
+          const index = appState.results.findIndex(r => 
+            r.nodeId === result.nodeId && r.originalText === originalText
+          );
+          if (index !== -1) {
+            appState.results[index].translatedText = newTranslation;
+          }
+        });
+        
+        // 发送到主线程更新Figma节点
+        this.postMessage('batch-update-translations', {
+          originalText,
+          newTranslation,
+          nodeIds: results.map(r => r.nodeId)
+        });
+        
+        // 重新渲染结果
+        this.renderResults();
+        
+        this.showNotification(`已批量更新 ${results.length} 个相同文本的翻译`, 'success');
+      },
+      
+      // 导出翻译结果
+      exportTranslationResults() {
+        if (appState.results.length === 0) {
+          this.showNotification('没有翻译结果可导出', 'warning');
+          return;
+        }
+        
+        const exportData = {
+          timestamp: new Date().toISOString(),
+          totalResults: appState.results.length,
+          successCount: appState.results.filter(r => r.status === 'success').length,
+          results: appState.results.map(r => ({
+            originalText: r.originalText,
+            translatedText: r.translatedText,
+            status: r.status,
+            applied: r.applied,
+            error: r.error
+          }))
+        };
+        
+        const jsonString = JSON.stringify(exportData, null, 2);
+        const blob = new Blob([jsonString], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `translation-results-${new Date().toISOString().split('T')[0]}.json`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        
+        this.showNotification('翻译结果已导出', 'success');
+      },
+      
+      // 清空结果
+      clearResults() {
+        if (appState.results.length === 0) {
+          this.showNotification('没有结果可清空', 'warning');
+          return;
+        }
+        
+        if (confirm('确定要清空所有翻译结果吗？此操作不会影响Figma中已应用的翻译。')) {
+          appState.results = [];
+          appState.translationHistory = [];
+          this.renderResults();
+          this.showNotification('已清空所有翻译结果', 'success');
+        }
+      },
+      
+      // 处理撤销结果
+      onUndoResult(payload) {
+        if (payload.success) {
+          // 清空翻译结果和历史
+          appState.results = [];
+          appState.translationHistory = [];
+          this.renderResults();
+          
+          this.showNotification(payload.message || '所有翻译已成功撤销', 'success');
+          
+          if (payload.errors && payload.errors.length > 0) {
+            console.warn('撤销过程中的错误:', payload.errors);
+          }
+        } else {
+          this.showNotification(`撤销失败: ${payload.error}`, 'error');
+        }
+      },
+      
+      // 处理批量更新结果
+      onBatchUpdateResult(payload) {
+        if (payload.success) {
+          this.showNotification(payload.message || '批量更新完成', 'success');
+          
+          if (payload.errors && payload.errors.length > 0) {
+            console.warn('批量更新过程中的错误:', payload.errors);
+          }
+        } else {
+          this.showNotification(`批量更新失败: ${payload.error}`, 'error');
+        }
+      },
+      
+      copyTranslation(index) {
+        const result = appState.results[index];
+        if (result && result.translatedText) {
+          // 尝试现代 clipboard API
+          if (navigator.clipboard && window.isSecureContext) {
+            navigator.clipboard.writeText(result.translatedText).then(() => {
+              this.showNotification('Translation copied to clipboard', 'success');
+            }).catch(() => {
+              this.fallbackCopyText(result.translatedText);
+            });
+          } else {
+            // 回退到传统方法
+            this.fallbackCopyText(result.translatedText);
+          }
+        } else {
+          this.showNotification('No translation text to copy', 'error');
+        }
+      },
+      
+      // 兼容性复制方法
+      fallbackCopyText(text) {
+        try {
+          // 创建临时文本区域
+          const textArea = document.createElement('textarea');
+          textArea.value = text;
+          textArea.style.position = 'fixed';
+          textArea.style.left = '-999999px';
+          textArea.style.top = '-999999px';
+          document.body.appendChild(textArea);
+          textArea.focus();
+          textArea.select();
+          
+          // 执行复制命令
+          const successful = document.execCommand('copy');
+          document.body.removeChild(textArea);
+          
+          if (successful) {
+            this.showNotification('Translation copied to clipboard', 'success');
+          } else {
+            this.showNotification('Copy failed - please select and copy manually', 'error');
+          }
+        } catch (err) {
+          console.error('Copy failed:', err);
+          this.showNotification('Copy failed - please select and copy manually', 'error');
+        }
+      },
+      
+      async retryApplyTranslation(index) {
+        const result = appState.results[index];
+        if (!result || !result.translatedText) {
+          this.showNotification('No translation to apply', 'error');
+          return;
+        }
+        
+        // 更新按钮状态
+        const retryBtn = document.querySelector(`button[onclick="ui.retryApplyTranslation(${index})"]`);
+        if (retryBtn) {
+          retryBtn.disabled = true;
+          retryBtn.innerHTML = '🔄 Retrying...';
+        }
+        
+        try {
+          // 获取当前翻译模式
+          const mode = document.getElementById('mode').value || 'replace';
+          
+          // 发送重试请求
+          const response = await this.sendMessage({
+            type: 'apply-translation',
+            payload: {
+              nodeId: result.nodeId,
+              translatedText: result.translatedText,
+              mode: mode
+            }
+          });
+          
+          if (response && response.payload && response.payload.success) {
+            // 更新结果状态
+            appState.results[index].applied = true;
+            this.renderResults();
+            this.showNotification('Translation applied successfully!', 'success');
+          } else {
+            const errorMsg = (response && response.payload && response.payload.error) || 'Failed to apply translation';
+            this.showNotification(`Retry failed: ${errorMsg}`, 'error');
+          }
+        } catch (error) {
+          console.error('Retry apply translation error:', error);
+          this.showNotification('Retry failed: ' + error.message, 'error');
+        } finally {
+          // 恢复按钮状态
+          if (retryBtn) {
+            retryBtn.disabled = false;
+            retryBtn.innerHTML = '🔄 Retry';
+          }
+        }
+      },
+      
+      // UI updates
+      updateUI() {
+        // Update selection stats
+        document.getElementById('total-nodes').textContent = appState.selection.totalNodes;
+        document.getElementById('text-nodes').textContent = appState.selection.textNodes;
+        
+        // Update translate button
+        const translateBtn = document.getElementById('translate-btn');
+        const hasSelection = appState.selection.textNodes > 0;
+        const hasEngine = document.getElementById('engine').value !== '';
+        const hasModel = document.getElementById('model-select').value !== '';
+        const hasApiKey = document.getElementById('api-key').value.trim() !== '';
+        
+        const canTranslate = hasSelection && hasEngine && hasModel && hasApiKey;
+        translateBtn.disabled = !canTranslate || appState.isTranslating;
+        translateBtn.textContent = appState.isTranslating ? '🔄 Translating...' : '🚀 Translate';
+        
+        // Update connection status
+        const statusEl = document.getElementById('connection-status');
+        if (appState.connected) {
+          statusEl.textContent = 'connected';
+          statusEl.className = 'connection-status connected';
+        } else {
+          statusEl.textContent = 'disconnected';
+          statusEl.className = 'connection-status disconnected';
+        }
+      },
+      
+      // Notifications
+      showNotification(message, type) {
+        const notification = document.getElementById('notification');
+        notification.textContent = message;
+        notification.className = `notification ${type} active`;
+        
+        setTimeout(() => {
+          notification.classList.remove('active');
+        }, 3000);
+      },
+      
+      // Message handling
+      postMessage(type, payload) {
+        const message = { type: type, payload: payload || {} };
+        console.log('Sending message:', message);
+        parent.postMessage({ pluginMessage: message }, '*');
+      },
+      
+      handleMessage(message) {
+        console.log('Received message:', message.type, message);
+        
+        switch (message.type) {
+          case 'plugin-ready':
+            appState.connected = true;
+            this.updateUI();
+            this.showNotification('Plugin connected', 'success');
+            // Load settings from storage
+            this.postMessage('load-settings');
+            setTimeout(() => this.refreshSelection(), 100);
+            break;
+            
+          case 'selection-info':
+            appState.selection = {
+              totalNodes: message.payload.totalNodes || 0,
+              textNodes: message.payload.textNodes || 0,
+              nodeIds: message.payload.nodeIds || []
+            };
+            this.updateUI();
+            break;
+            
+          case 'translation-progress':
+            this.updateProgress(message.payload.progress, message.payload.status);
+            break;
+            
+          case 'translation-result':
+            this.addResult(message.payload);
+            break;
+            
+          case 'translation-complete':
+            appState.isTranslating = false;
+            this.updateUI();
+            this.updateProgress(100, 'Complete');
+            document.getElementById('progress-section').classList.remove('active');
+            this.showNotification(
+              `Translation complete! ${message.payload.successCount} success, ${message.payload.failureCount} failed`,
+              'success'
+            );
+            break;
+            
+          case 'undo-result':
+            this.onUndoResult(message.payload);
+            break;
+            
+          case 'batch-update-result':
+            this.onBatchUpdateResult(message.payload);
+            break;
+            
+          case 'engine-test-result':
+            const engine = message.payload.engine;
+            const testBtn = document.getElementById(engine + '-test-btn');
+            testBtn.disabled = false;
+            
+            if (message.payload.success) {
+              testBtn.textContent = 'Test Connection';
+              this.showNotification(`${engine} connection test passed`, 'success');
+            } else {
+              testBtn.textContent = 'Test Failed';
+              this.showNotification(`${engine} test failed: ${message.payload.error}`, 'error');
+              setTimeout(() => {
+                testBtn.textContent = 'Test Connection';
+              }, 2000);
+            }
+            break;
+            
+          case 'settings-loaded':
+            console.log('Settings loaded:', message.payload);
+            // Apply loaded settings to the UI state
+            if (message.payload.engines) {
+              appState.engines = message.payload.engines;
+            }
+            if (message.payload.settings) {
+              appState.settings = message.payload.settings;
+              document.getElementById('target-lang').value = appState.settings.defaultTargetLang;
+            }
+            if (message.payload.translationMemories) {
+              appState.translationMemories = message.payload.translationMemories;
+            }
+            if (message.payload.glossary) {
+              appState.glossary = message.payload.glossary;
+            }
+            if (message.payload.advancedPrompt) {
+              appState.advancedPrompt = message.payload.advancedPrompt;
+            }
+            if (message.payload.contentFilters) {
+              appState.contentFilters = message.payload.contentFilters;
+            }
+            if (message.payload.general) {
+              appState.general = message.payload.general;
+            }
+            this.updateEngineDropdown();
+            this.updateUI();
+            break;
+            
+          case 'settings-save-result':
+            if (message.payload.success) {
+              console.log('Settings persisted to storage successfully');
+            } else {
+              this.showNotification('Failed to save settings: ' + message.payload.error, 'error');
+            }
+            break;
+            
+          case 'locate-result':
+            if (message.payload.success) {
+              this.showNotification('节点定位成功！', 'success');
+            } else {
+              this.showNotification(`定位失败: ${message.payload.error}`, 'error');
+            }
+            break;
+            
+          case 'error':
+            this.showNotification(message.payload.error, 'error');
+            if (appState.isTranslating) {
+              appState.isTranslating = false;
+              this.updateUI();
+              document.getElementById('progress-section').classList.remove('active');
+            }
+            break;
+            
+          default:
+            console.log('Unknown message type:', message.type);
+        }
+      },
+      
+      // 节点定位功能
+      locateNode(index) {
+        const result = appState.results[index];
+        if (result && result.nodeId) {
+          this.postMessage('locate-node', { nodeId: result.nodeId });
+          this.showNotification('正在定位到该节点...', 'success');
+        } else {
+          this.showNotification('无法定位节点：节点ID缺失', 'error');
+        }
+      },
+      
+      // 词库管理功能
+      addGlossaryTerm() {
+        const sourceText = document.getElementById('glossary-source').value.trim();
+        const targetText = document.getElementById('glossary-target').value.trim();
+        
+        if (!sourceText || !targetText) {
+          this.showNotification('请输入源文本和目标文本', 'error');
+          return;
+        }
+        
+        // 增强的去重检查：检查源文本的精确匹配和模糊匹配
+        const existingIndex = appState.glossary.terms.findIndex(term => 
+          term.source.toLowerCase().trim() === sourceText.toLowerCase().trim()
+        );
+        
+        if (existingIndex >= 0) {
+          const existingTerm = appState.glossary.terms[existingIndex];
+          if (existingTerm.target === targetText) {
+            this.showNotification('该词库条目已存在', 'warning');
+            return;
+          }
+          
+          // 如果目标文本不同，询问用户是否更新
+          if (confirm(`词库中已存在 "${sourceText}"，当前翻译为 "${existingTerm.target}"。\n是否更新为 "${targetText}"？`)) {
+            appState.glossary.terms[existingIndex] = {
+              ...existingTerm,
+              target: targetText,
+              updatedAt: Date.now()
+            };
+            this.showNotification('词库条目已更新', 'success');
+          } else {
+            return;
+          }
+        } else {
+          // 检查是否有相似的源文本（防止重复添加相似条目）
+          const similarTerm = appState.glossary.terms.find(term => {
+            const similarity = this.calculateTextSimilarity(term.source, sourceText);
+            return similarity > 0.8; // 80%相似度
+          });
+          
+          if (similarTerm) {
+            if (!confirm(`词库中存在相似条目："${similarTerm.source}" → "${similarTerm.target}"。\n是否仍要添加新条目？`)) {
+              return;
+            }
+          }
+          
+          // 添加新词条
+          appState.glossary.terms.push({
+            id: Date.now().toString(),
+            source: sourceText,
+            target: targetText,
+            createdAt: Date.now()
+          });
+          this.showNotification('已添加到词库', 'success');
+        }
+        
+        // 清空输入框
+        document.getElementById('glossary-source').value = '';
+        document.getElementById('glossary-target').value = '';
+        
+        // 刷新词库显示
+        this.renderGlossaryTerms();
+        
+        // 保存设置到本地状态和Figma存储，但不关闭设置页面
+        this.saveSettingsData();
+      },
+      
+      removeGlossaryTerm(index) {
+        if (index >= 0 && index < appState.glossary.terms.length) {
+          appState.glossary.terms.splice(index, 1);
+          this.renderGlossaryTerms();
+          this.saveSettingsData();
+          this.showNotification('已删除词库条目', 'success');
+        }
+      },
+      
+      clearGlossary() {
+        if (appState.glossary.terms.length === 0) {
+          this.showNotification('词库已为空', 'warning');
+          return;
+        }
+        
+        if (confirm(`确定要清空所有${appState.glossary.terms.length}个词库条目吗？`)) {
+          appState.glossary.terms = [];
+          this.renderGlossaryTerms();
+          this.saveSettingsData();
+          this.showNotification('词库已清空', 'success');
+        }
+      },
+      
+      renderGlossaryTerms() {
+        const container = document.getElementById('glossary-terms');
+        if (!container) return;
+        
+        if (appState.glossary.terms.length === 0) {
+          container.innerHTML = '<div class="empty-state">暂无词库条目</div>';
+          return;
+        }
+        
+        const termsHtml = appState.glossary.terms.map((term, index) => `
+          <div class="glossary-term-item" data-index="${index}">
+            <div class="term-content">
+              <div class="term-source" contenteditable="true" 
+                   onblur="ui.updateGlossaryTerm(${index}, 'source', this.textContent.trim())"
+                   onkeydown="ui.handleGlossaryEdit(event, ${index}, 'source')">${this.escapeHtml(term.source)}</div>
+              <div class="term-arrow">→</div>
+              <div class="term-target" contenteditable="true"
+                   onblur="ui.updateGlossaryTerm(${index}, 'target', this.textContent.trim())"
+                   onkeydown="ui.handleGlossaryEdit(event, ${index}, 'target')">${this.escapeHtml(term.target)}</div>
+            </div>
+            <div class="term-actions">
+              <button class="btn-icon btn-icon-edit" onclick="ui.editGlossaryTerm(${index})" title="编辑" aria-label="编辑">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                  <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                </svg>
+              </button>
+              <button class="btn-icon btn-icon-delete" onclick="ui.removeGlossaryTerm(${index})" title="删除" aria-label="删除">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="3,6 5,6 21,6"></polyline>
+                  <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                </svg>
+              </button>
+            </div>
+          </div>
+        `).join('');
+        
+        container.innerHTML = termsHtml;
+      },
+      
+      // 从翻译结果导入词库条目
+      importToGlossary(sourceText, targetText) {
+        if (!sourceText || !targetText) return;
+        
+        // 检查是否已存在
+        const exists = appState.glossary.terms.some(term => 
+          term.source.toLowerCase() === sourceText.toLowerCase()
+        );
+        
+        if (!exists) {
+          appState.glossary.terms.push({
+            source: sourceText,
+            target: targetText,
+            createdAt: Date.now()
+          });
+          this.saveSettingsData();
+          this.showNotification('已导入到词库', 'success');
+        } else {
+          this.showNotification('该词条已存在于词库中', 'warning');
+        }
+      },
+      
+      // 词库匹配功能
+      findGlossaryMatch(text) {
+        if (!appState.glossary.enabled || appState.glossary.terms.length === 0) {
+          return null;
+        }
+        
+        const sensitivity = appState.glossary.sensitivity;
+        
+        for (const term of appState.glossary.terms) {
+          if (sensitivity === 'exact') {
+            if (term.source === text) {
+              return term.target;
+            }
+          } else if (sensitivity === 'fuzzy') {
+            if (term.source.toLowerCase() === text.toLowerCase()) {
+              return term.target;
+            }
+          } else if (sensitivity === 'partial') {
+            if (text.toLowerCase().includes(term.source.toLowerCase()) || 
+                term.source.toLowerCase().includes(text.toLowerCase())) {
+              return term.target;
+            }
+          }
+        }
+        
+        return null;
+      },
+      
+      // 翻译结果编辑功能
+      updateTranslationResult(index, newText) {
+        console.log(`更新翻译结果: 索引=${index}, 新文本="${newText}"`);
+        
+        // 清除编辑状态
+        const editableElements = document.querySelectorAll(`.result-content-editable[data-index="${index}"]`);
+        editableElements.forEach(el => el.classList.remove('editing'));
+        
+        if (index >= 0 && index < appState.results.length) {
+          const result = appState.results[index];
+          const oldText = result.translatedText;
+          
+          if (newText !== oldText) {
+            // 更新本地状态
+            result.translatedText = newText;
+            
+            console.log(`翻译结果已更新: "${oldText}" -> "${newText}"`);
+            this.showNotification('翻译结果已更新', 'success');
+            
+            // 如果结果已应用到Figma，重新应用新的翻译
+            if (result.applied && result.nodeId) {
+              console.log(`重新应用翻译到节点: ${result.nodeId}`);
+              this.postMessage('apply-translation', {
+                nodeId: result.nodeId,
+                translatedText: newText,
+                mode: appState.selectedOutputMode || 'replace'
+              });
+            }
+            
+            // 将编辑后的翻译添加到词库（如果启用了自动保存）
+            const autoSaveGlossary = document.getElementById('auto-save-glossary') && document.getElementById('auto-save-glossary').checked;
+            if (autoSaveGlossary && result.originalText && newText.trim()) {
+              this.addToGlossaryFromEdit(result.originalText, newText);
+            }
+          } else {
+            console.log('翻译内容无变化，跳过更新');
+          }
+        } else {
+          console.error(`无效的索引: ${index}, 结果数组长度: ${appState.results.length}`);
+        }
+      },
+      
+      handleTranslationEdit(event, index) {
+        const element = event.target;
+        
+        if (event.key === 'Enter' && !event.shiftKey) {
+          event.preventDefault();
+          element.blur(); // 触发 onblur 事件来保存
+        }
+        if (event.key === 'Escape') {
+          event.preventDefault();
+          // 恢复原内容
+          const originalText = element.dataset.originalText || (appState.results[index] && appState.results[index].translatedText) || '';
+          element.textContent = originalText;
+          element.classList.remove('editing');
+          element.blur();
+        }
+      },
+      
+      // 从编辑操作添加到词库
+      addToGlossaryFromEdit(originalText, translatedText) {
+        // 检查是否已存在
+        const exists = appState.glossary.terms.some(term => 
+          term.source.toLowerCase() === originalText.toLowerCase()
+        );
+        
+        if (!exists) {
+          appState.glossary.terms.push({
+            source: originalText,
+            target: translatedText,
+            createdAt: Date.now(),
+            fromEdit: true
+          });
+          
+          console.log(`从编辑添加到词库: "${originalText}" -> "${translatedText}"`);
+          this.showNotification(`已添加到词库: ${originalText} → ${translatedText}`, 'info');
+        }
+      },
+      
+      // 翻译编辑聚焦处理
+      onTranslationEditFocus(event, index) {
+        const element = event.target;
+        element.dataset.originalText = element.textContent; // 存储原始文本用于取消
+        element.classList.add('editing');
+        
+        // 选择所有文本以便用户直接输入
+        setTimeout(() => {
+          const range = document.createRange();
+          const selection = window.getSelection();
+          range.selectNodeContents(element);
+          selection.removeAllRanges();
+          selection.addRange(range);
+        }, 0);
+      },
+      
+      // 文本相似度计算（简单的编辑距离算法）
+      calculateTextSimilarity(str1, str2) {
+        if (!str1 || !str2) return 0;
+        
+        const s1 = str1.toLowerCase().trim();
+        const s2 = str2.toLowerCase().trim();
+        
+        if (s1 === s2) return 1;
+        
+        const longer = s1.length > s2.length ? s1 : s2;
+        const shorter = s1.length > s2.length ? s2 : s1;
+        
+        if (longer.length === 0) return 1;
+        
+        const editDistance = this.levenshteinDistance(longer, shorter);
+        return (longer.length - editDistance) / longer.length;
+      },
+      
+      // 计算编辑距离
+      levenshteinDistance(str1, str2) {
+        const matrix = [];
+        
+        for (let i = 0; i <= str2.length; i++) {
+          matrix[i] = [i];
+        }
+        
+        for (let j = 0; j <= str1.length; j++) {
+          matrix[0][j] = j;
+        }
+        
+        for (let i = 1; i <= str2.length; i++) {
+          for (let j = 1; j <= str1.length; j++) {
+            if (str2.charAt(i - 1) === str1.charAt(j - 1)) {
+              matrix[i][j] = matrix[i - 1][j - 1];
+            } else {
+              matrix[i][j] = Math.min(
+                matrix[i - 1][j - 1] + 1,
+                matrix[i][j - 1] + 1,
+                matrix[i - 1][j] + 1
+              );
+            }
+          }
+        }
+        
+        return matrix[str2.length][str1.length];
+      },
+      
+      // 词库编辑功能
+      updateGlossaryTerm(index, field, newValue) {
+        if (index >= 0 && index < appState.glossary.terms.length && newValue) {
+          const term = appState.glossary.terms[index];
+          if (term[field] !== newValue) {
+            // 如果修改源文本，检查是否有冲突
+            if (field === 'source') {
+              const conflictIndex = appState.glossary.terms.findIndex((t, i) => 
+                i !== index && t.source.toLowerCase().trim() === newValue.toLowerCase().trim()
+              );
+              
+              if (conflictIndex >= 0) {
+                this.showNotification('该源文本已存在于词库中', 'error');
+                // 恢复原始值
+                document.querySelector(`[data-index="${index}"] .term-${field}`).textContent = term[field];
+                return;
+              }
+            }
+            
+            term[field] = newValue;
+            term.updatedAt = Date.now();
+            this.showNotification('词库条目已更新', 'success');
+            this.saveSettingsData();
+          }
+        }
+      },
+      
+      handleGlossaryEdit(event, index, field) {
+        if (event.key === 'Enter' && !event.shiftKey) {
+          event.preventDefault();
+          event.target.blur();
+        }
+        if (event.key === 'Escape') {
+          event.preventDefault();
+          // 恢复原始值
+          event.target.textContent = appState.glossary.terms[index][field];
+          event.target.blur();
+        }
+      },
+      
+      editGlossaryTerm(index) {
+        // 高亮显示该条目进入编辑状态
+        const termItem = document.querySelector(`[data-index="${index}"]`);
+        if (termItem) {
+          termItem.style.background = '#fff3cd';
+          termItem.style.borderColor = '#ffeaa7';
+          
+          setTimeout(() => {
+            termItem.style.background = '';
+            termItem.style.borderColor = '';
+          }, 2000);
+          
+          // 聚焦到源文本编辑
+          const sourceElement = termItem.querySelector('.term-source');
+          if (sourceElement) {
+            sourceElement.focus();
+          }
+        }
+      },
+      
+      // 新的设置页面功能实现
+      
+      // 加载基础Prompt
+      loadBasePrompt() {
+        const basePromptDisplay = document.getElementById('base-prompt-display');
+        if (basePromptDisplay) {
+          basePromptDisplay.textContent = `You are a professional translator specializing in networking and smart home device interfaces. You translate UI elements for TP-Link products including routers, switches, access points, smart plugs, cameras, and IoT devices.
+
+CRITICAL TRANSLATION RULES:
+1. NEVER add quotes, brackets, or any extra formatting around the translation
+2. Output ONLY the translated text, nothing else
+3. Maintain exact formatting, capitalization patterns, and punctuation
+4. Preserve technical terms, model numbers, and brand names
+5. Keep all symbols, special characters, and spacing identical
+6. Translate UI labels using standard industry terminology
+7. For networking terms, use established Chinese technical vocabulary
+8. For smart home features, use commonly accepted Chinese terms`;
+        }
+      },
+      
+      // 加载Prompt设置
+      loadPromptSettings() {
+        const projectType = document.getElementById('project-type');
+        const industry = document.getElementById('project-industry');
+        const targetAudience = document.getElementById('target-audience');
+        const languageStyle = document.getElementById('language-style');
+        const specialInstructions = document.getElementById('special-instructions');
+        
+        if (projectType) projectType.value = appState.advancedPrompt.projectType;
+        if (industry) industry.value = appState.advancedPrompt.industry;
+        if (targetAudience) targetAudience.value = appState.advancedPrompt.targetAudience;
+        if (languageStyle) languageStyle.value = appState.advancedPrompt.languageStyle;
+        if (specialInstructions) specialInstructions.value = appState.advancedPrompt.specialInstructions;
+        
+        this.renderConstraints();
+      },
+      
+      // 渲染约束列表
+      renderConstraints() {
+        const container = document.getElementById('constraints-list');
+        if (!container) return;
+        
+        if (appState.advancedPrompt.constraints.length === 0) {
+          container.innerHTML = '<div class="empty-state"><div class="empty-icon">🔒</div><div class="empty-title">No constraints defined</div><div class="empty-description">Add constraints to ensure consistent translation of specific terms</div></div>';
+          return;
+        }
+        
+        const constraintsHtml = appState.advancedPrompt.constraints.map((constraint, index) => `
+          <div class="constraint-item">
+            <div class="constraint-content">
+              <div class="constraint-source">${this.escapeHtml(constraint.source)}</div>
+              <div class="constraint-arrow">→</div>
+              <div class="constraint-target">${this.escapeHtml(constraint.target)}</div>
+              <div class="constraint-type">(${constraint.type})</div>
+            </div>
+            <button class="btn-icon btn-icon-delete" onclick="ui.removeConstraint(${index})" title="删除">🗑️</button>
+          </div>
+        `).join('');
+        
+        container.innerHTML = constraintsHtml;
+      },
+      
+      // 添加约束（增强版）
+      addConstraint() {
+        // 创建模态框形式的约束添加界面
+        const modalHtml = `
+          <div class="constraint-modal-overlay" id="constraint-modal">
+            <div class="constraint-modal">
+              <div class="constraint-modal-header">
+                <h3>Add Translation Constraint</h3>
+                <button onclick="ui.closeConstraintModal()" class="modal-close">×</button>
+              </div>
+              <div class="constraint-modal-body">
+                <div class="form-group">
+                  <label class="form-label">Source Text</label>
+                  <input type="text" class="input" id="constraint-source" placeholder="e.g., TP-Link">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Fixed Translation</label>
+                  <input type="text" class="input" id="constraint-target" placeholder="e.g., TP-Link">
+                </div>
+                <div class="form-row">
+                  <div class="form-col">
+                    <label class="form-label">Constraint Type</label>
+                    <select class="select" id="constraint-type">
+                      <option value="exact">Exact Match</option>
+                      <option value="pattern">Regex Pattern</option>
+                      <option value="context">Context-aware</option>
+                    </select>
+                  </div>
+                  <div class="form-col">
+                    <label class="form-label">Priority</label>
+                    <select class="select" id="constraint-priority">
+                      <option value="absolute">Absolute</option>
+                      <option value="high" selected>High</option>
+                      <option value="medium">Medium</option>
+                      <option value="low">Low</option>
+                    </select>
+                  </div>
+                </div>
+                <div id="constraint-conflicts" class="constraint-conflicts"></div>
+              </div>
+              <div class="constraint-modal-footer">
+                <button class="btn btn-secondary" onclick="ui.closeConstraintModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="ui.saveConstraint()">Add Constraint</button>
+              </div>
+            </div>
+          </div>
+        `;
+        
+        document.body.insertAdjacentHTML('beforeend', modalHtml);
+        
+        // 实时冲突检测
+        document.getElementById('constraint-source').addEventListener('input', () => {
+          this.checkConstraintConflicts();
+        });
+        document.getElementById('constraint-target').addEventListener('input', () => {
+          this.checkConstraintConflicts();
+        });
+      },
+      
+      // 关闭约束模态框
+      closeConstraintModal() {
+        const modal = document.getElementById('constraint-modal');
+        if (modal) {
+          modal.remove();
+        }
+      },
+      
+      // 保存约束
+      saveConstraint() {
+        const source = document.getElementById('constraint-source').value.trim();
+        const target = document.getElementById('constraint-target').value.trim();
+        const type = document.getElementById('constraint-type').value;
+        const priority = document.getElementById('constraint-priority').value;
+        
+        if (!source || !target) {
+          this.showNotification('请输入源文本和目标文本', 'error');
+          return;
+        }
+        
+        // 检查冲突
+        const existingIndex = appState.advancedPrompt.constraints.findIndex(
+          c => c.source.toLowerCase() === source.toLowerCase()
+        );
+        
+        if (existingIndex >= 0 && appState.advancedPrompt.constraints[existingIndex].target !== target) {
+          if (!confirm(`源文本 "${source}" 已存在约束。是否替换？`)) {
+            return;
+          }
+          appState.advancedPrompt.constraints[existingIndex] = {
+            source,
+            target,
+            type,
+            priority,
+            updatedAt: Date.now()
+          };
+        } else {
+          appState.advancedPrompt.constraints.push({
+            id: Date.now().toString(),
+            source,
+            target,
+            type,
+            priority,
+            createdAt: Date.now()
+          });
+        }
+        
+        this.closeConstraintModal();
+        this.renderConstraints();
+        this.showNotification('约束已添加', 'success');
+      },
+      
+      // 检查约束冲突
+      checkConstraintConflicts() {
+        const source = document.getElementById('constraint-source') && document.getElementById('constraint-source').value.trim();
+        const conflictsDiv = document.getElementById('constraint-conflicts');
+        
+        if (!source || !conflictsDiv) return;
+        
+        const existingConstraint = appState.advancedPrompt.constraints.find(
+          c => c.source.toLowerCase() === source.toLowerCase()
+        );
+        
+        if (existingConstraint) {
+          conflictsDiv.innerHTML = `
+            <div class="constraint-warning">
+              ⚠️ 约束冲突：源文本 "${source}" 已存在，当前翻译为 "${existingConstraint.target}"
+            </div>
+          `;
+        } else {
+          conflictsDiv.innerHTML = '';
+        }
+      },
+      
+      // 删除约束
+      removeConstraint(index) {
+        if (index >= 0 && index < appState.advancedPrompt.constraints.length) {
+          appState.advancedPrompt.constraints.splice(index, 1);
+          this.renderConstraints();
+          this.showNotification('约束已删除', 'success');
+        }
+      },
+      
+      // 导入约束
+      importConstraints() {
+        this.showNotification('约束导入功能开发中...', 'info');
+      },
+      
+      // 预览Prompt
+      previewPrompt() {
+        const testText = document.getElementById('preview-text').value.trim();
+        if (!testText) {
+          this.showNotification('请输入测试文本', 'warning');
+          return;
+        }
+        
+        // 生成完整的prompt（使用当前UI设置）
+        const sourceLang = (document.getElementById('source-lang') && document.getElementById('source-lang').value) || 'auto';
+        const targetLang = (document.getElementById('target-lang') && document.getElementById('target-lang').value) || 'zh-CN';
+        const fullPrompt = this.generateFullPrompt(testText, sourceLang, targetLang);
+        const previewDisplay = document.getElementById('prompt-preview-display');
+        if (previewDisplay) {
+          previewDisplay.textContent = fullPrompt;
+        }
+      },
+      
+      // 生成完整Prompt（用于实际翻译）
+      generateFullPrompt(text, sourceLang = 'auto', targetLang = 'zh-CN') {
+        const basePrompt = this.getBasePrompt();
+        const context = this.buildProjectContext();
+        const constraints = this.buildConstraintsPrompt();
+        const glossaryPrompt = this.buildGlossaryPrompt();
+        
+        return `${basePrompt}
+
+TRANSLATION REQUEST:
+- From: ${sourceLang === 'auto' ? 'Auto-detect' : sourceLang}
+- To: ${targetLang}
+
+${context}
+
+${constraints}
+
+${glossaryPrompt}
+
+CRITICAL INSTRUCTIONS:
+1. Apply fixed translation constraints FIRST (highest priority)
+2. Use glossary terms when available (medium priority) 
+3. Follow project context and style guidelines (low priority)
+4. Maintain all original formatting exactly
+
+Text to translate: "${text}"
+
+Translation:`;
+      },
+      
+      // 获取完整的基础Prompt
+      getBasePrompt() {
+        return `You are a professional translator specializing in networking and smart home device interfaces. You translate UI elements for TP-Link products including routers, switches, access points, smart plugs, cameras, and IoT devices.
+
+CORE TRANSLATION PRINCIPLES:
+1. NEVER add quotes, brackets, or any extra formatting around the translation
+2. Output ONLY the translated text, nothing else
+3. Maintain exact formatting, capitalization patterns, and punctuation
+4. Preserve technical terms, model numbers, and brand names
+5. Keep all symbols, special characters, and spacing identical
+6. Translate UI labels using standard industry terminology
+7. For networking terms, use established technical vocabulary
+8. For smart home features, use commonly accepted terms
+
+BRAND PROTECTION:
+- Keep "TP-Link", "Archer", "Deco", "Tapo" in English
+- Preserve model numbers (e.g., "AC1900", "AX6000")
+- Keep version numbers unchanged (e.g., "v1.2.3")
+
+TECHNICAL TERMINOLOGY:
+- Router → 路由器
+- Switch → 交换机
+- Access Point → 接入点
+- WiFi → WiFi (keep as-is)
+- Ethernet → 以太网
+- Bandwidth → 带宽
+- Firewall → 防火墙
+- Smart Plug → 智能插座
+- Smart Camera → 智能摄像头`;
+      },
+      
+      // 构建词库Prompt
+      buildGlossaryPrompt() {
+        if (!appState.glossary.enabled || appState.glossary.terms.length === 0) {
+          return '';
+        }
+        
+        let glossaryPrompt = 'GLOSSARY TERMS (Use these translations when applicable):\n';
+        appState.glossary.terms.forEach(term => {
+          glossaryPrompt += `- "${term.source}" → "${term.target}"\n`;
+        });
+        
+        return glossaryPrompt;
+      },
+      
+      // 约束翻译处理器
+      processTranslationWithConstraints(text, sourceLang = 'auto', targetLang = 'zh-CN') {
+        // 第一阶段：预处理文本，应用约束
+        const processResult = this.preProcessWithConstraints(text);
+        
+        // 第二阶段：生成用于AI的处理后prompt
+        const enhancedPrompt = this.generateFullPrompt(processResult.processedText, sourceLang, targetLang);
+        
+        // 第三阶段：后处理函数（在AI翻译后使用）
+        return {
+          enhancedPrompt,
+          postProcess: (aiTranslation) => this.postProcessWithConstraints(aiTranslation, processResult.segments)
+        };
+      },
+      
+      // 预处理：应用约束前的文本分析
+      preProcessWithConstraints(text) {
+        const segments = [];
+        let processedText = text;
+        
+        // 按优先级排序约束
+        const sortedConstraints = [...appState.advancedPrompt.constraints].sort((a, b) => {
+          const priorityWeights = { 'absolute': 1, 'high': 2, 'medium': 3, 'low': 4 };
+          return priorityWeights[a.priority] - priorityWeights[b.priority];
+        });
+        
+        // 应用每个约束
+        for (const constraint of sortedConstraints) {
+          const matches = this.findConstraintMatches(processedText, constraint);
+          
+          for (const match of matches) {
+            // 创建占位符
+            const placeholder = `__CONSTRAINT_${segments.length}__`;
+            
+            // 记录约束信息
+            segments.push({
+              originalText: match.text,
+              fixedTranslation: constraint.target,
+              placeholder: placeholder,
+              start: match.start,
+              end: match.end,
+              constraint: constraint
+            });
+            
+            // 用占位符替换原文本
+            processedText = processedText.replace(match.text, placeholder);
+          }
+        }
+        
+        return { processedText, segments };
+      },
+      
+      // 查找约束匹配
+      findConstraintMatches(text, constraint) {
+        const matches = [];
+        
+        switch (constraint.type) {
+          case 'exact':
+            // 精确匹配
+            const exactRegex = new RegExp(this.escapeRegex(constraint.source), 'gi');
+            let exactMatch;
+            while ((exactMatch = exactRegex.exec(text)) !== null) {
+              matches.push({
+                text: exactMatch[0],
+                start: exactMatch.index,
+                end: exactMatch.index + exactMatch[0].length
+              });
+            }
+            break;
+            
+          case 'pattern':
+            // 模式匹配
+            try {
+              const patternRegex = new RegExp(constraint.source, 'gi');
+              let patternMatch;
+              while ((patternMatch = patternRegex.exec(text)) !== null) {
+                matches.push({
+                  text: patternMatch[0],
+                  start: patternMatch.index,
+                  end: patternMatch.index + patternMatch[0].length
+                });
+              }
+            } catch (e) {
+              console.warn('Invalid regex pattern in constraint:', constraint.source);
+            }
+            break;
+            
+          case 'context':
+            // 上下文相关匹配（简化版本）
+            if (text.toLowerCase().includes(constraint.source.toLowerCase())) {
+              const contextMatch = text.match(new RegExp(this.escapeRegex(constraint.source), 'gi'));
+              if (contextMatch) {
+                contextMatch.forEach(match => {
+                  const index = text.indexOf(match);
+                  matches.push({
+                    text: match,
+                    start: index,
+                    end: index + match.length
+                  });
+                });
+              }
+            }
+            break;
+        }
+        
+        return matches;
+      },
+      
+      // 后处理：恢复约束翻译
+      postProcessWithConstraints(translatedText, segments) {
+        let result = translatedText;
+        
+        // 按segments顺序恢复固定翻译
+        for (const segment of segments) {
+          let fixedTranslation = segment.fixedTranslation;
+          
+          // 处理特殊占位符
+          if (fixedTranslation === '${match}') {
+            fixedTranslation = segment.originalText; // 保持原文
+          }
+          
+          // 替换占位符
+          result = result.replace(segment.placeholder, fixedTranslation);
+        }
+        
+        return result;
+      },
+      
+      // 转义正则表达式特殊字符
+      escapeRegex(string) {
+        return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      },
+      
+      // 约束冲突检测
+      detectConstraintConflicts() {
+        const conflicts = [];
+        const constraintMap = new Map();
+        
+        // 按源文本分组
+        for (const constraint of appState.advancedPrompt.constraints) {
+          const key = constraint.source.toLowerCase();
+          if (!constraintMap.has(key)) {
+            constraintMap.set(key, []);
+          }
+          constraintMap.get(key).push(constraint);
+        }
+        
+        // 检测冲突
+        for (const [source, constraints] of constraintMap) {
+          if (constraints.length > 1) {
+            const translations = new Set(constraints.map(c => c.target));
+            if (translations.size > 1) {
+              conflicts.push({
+                source,
+                constraints,
+                type: 'multiple_translations',
+                severity: 'high'
+              });
+            }
+          }
+        }
+        
+        return conflicts;
+      },
+      
+      // 智能约束建议
+      suggestConstraintsFromGlossary() {
+        const suggestions = [];
+        
+        // 从词库生成约束建议
+        for (const term of appState.glossary.terms) {
+          const existingConstraint = appState.advancedPrompt.constraints.find(
+            c => c.source.toLowerCase() === term.source.toLowerCase()
+          );
+          
+          if (!existingConstraint) {
+            suggestions.push({
+              source: term.source,
+              target: term.target,
+              type: 'exact',
+              priority: 'high',
+              reason: 'From glossary terms'
+            });
+          }
+        }
+        
+        return suggestions;
+      },
+      
+      // ==================== 撤销系统 ====================
+      
+      // 撤销管理器
+      undoManager: {
+        // 记录翻译操作
+        recordTranslationSession(sessionData) {
+          const session = {
+            id: sessionData.sessionId || Date.now().toString(),
+            type: 'translation_batch',
+            timestamp: Date.now(),
+            sourceLang: sessionData.sourceLang,
+            targetLang: sessionData.targetLang,
+            engine: sessionData.engine,
+            mode: sessionData.mode,
+            operations: [],
+            status: 'in_progress'
+          };
+          
+          appState.undoSystem.currentSessionId = session.id;
+          appState.undoSystem.history.unshift(session);
+          
+          // 限制历史记录数量
+          if (appState.undoSystem.history.length > appState.undoSystem.maxHistory) {
+            appState.undoSystem.history = appState.undoSystem.history.slice(0, appState.undoSystem.maxHistory);
+          }
+          
+          return session.id;
+        },
+        
+        // 记录单个翻译操作
+        recordTranslationOperation(nodeId, originalText, translatedText, applied = false) {
+          const currentSession = this.getCurrentSession();
+          if (!currentSession) return;
+          
+          const operation = {
+            id: Date.now().toString(),
+            nodeId,
+            originalText,
+            translatedText,
+            applied,
+            timestamp: Date.now()
+          };
+          
+          currentSession.operations.push(operation);
+        },
+        
+        // 完成翻译会话
+        completeTranslationSession(sessionId, results) {
+          const session = appState.undoSystem.history.find(s => s.id === sessionId);
+          if (session) {
+            session.status = 'completed';
+            session.completedAt = Date.now();
+            session.successCount = results.filter(r => r.status === 'success').length;
+            session.failureCount = results.filter(r => r.status === 'error').length;
+            session.totalCount = results.length;
+          }
+          appState.undoSystem.currentSessionId = null;
+        },
+        
+        // 获取当前会话
+        getCurrentSession() {
+          if (!appState.undoSystem.currentSessionId) return null;
+          return appState.undoSystem.history.find(s => s.id === appState.undoSystem.currentSessionId);
+        },
+        
+        // 撤销整个翻译会话
+        undoTranslationSession(sessionId) {
+          const session = appState.undoSystem.history.find(s => s.id === sessionId);
+          if (!session) return false;
+          
+          const undoOperations = session.operations.filter(op => op.applied);
+          
+          if (undoOperations.length === 0) {
+            ui.showNotification('该会话没有应用的翻译可撤销', 'warning');
+            return false;
+          }
+          
+          if (!confirm(`确定要撤销这次翻译会话吗？这将影响 ${undoOperations.length} 个文本节点。`)) {
+            return false;
+          }
+          
+          // 发送撤销请求到主线程
+          ui.postMessage('undo-translation-session', {
+            sessionId: sessionId,
+            operations: undoOperations
+          });
+          
+          // 标记会话为已撤销
+          session.status = 'undone';
+          session.undoneAt = Date.now();
+          
+          ui.showNotification(`已撤销翻译会话，恢复了 ${undoOperations.length} 个节点`, 'success');
+          return true;
+        },
+        
+        // 撤销特定原始文本的所有翻译
+        undoByOriginalText(originalText) {
+          const affectedSessions = [];
+          const affectedOperations = [];
+          
+          // 查找所有包含该原始文本的操作
+          for (const session of appState.undoSystem.history) {
+            const matchingOps = session.operations.filter(op => 
+              op.originalText.toLowerCase().includes(originalText.toLowerCase()) && op.applied
+            );
+            
+            if (matchingOps.length > 0) {
+              affectedSessions.push(session);
+              affectedOperations.push(...matchingOps);
+            }
+          }
+          
+          if (affectedOperations.length === 0) {
+            ui.showNotification('没有找到包含该文本的已应用翻译', 'warning');
+            return false;
+          }
+          
+          if (!confirm(`找到 ${affectedOperations.length} 个包含 "${originalText}" 的翻译。确定要全部撤销吗？`)) {
+            return false;
+          }
+          
+          // 发送批量撤销请求
+          ui.postMessage('undo-by-original-text', {
+            originalText: originalText,
+            operations: affectedOperations
+          });
+          
+          // 标记相关操作为已撤销
+          affectedOperations.forEach(op => {
+            op.undone = true;
+            op.undoneAt = Date.now();
+          });
+          
+          ui.showNotification(`已撤销 ${affectedOperations.length} 个包含 "${originalText}" 的翻译`, 'success');
+          return true;
+        },
+        
+        // 获取撤销历史统计
+        getUndoHistoryStats() {
+          const stats = {
+            totalSessions: appState.undoSystem.history.length,
+            completedSessions: 0,
+            totalOperations: 0,
+            successfulOperations: 0,
+            undoneOperations: 0
+          };
+          
+          appState.undoSystem.history.forEach(session => {
+            if (session.status === 'completed') {
+              stats.completedSessions++;
+            }
+            
+            session.operations.forEach(op => {
+              stats.totalOperations++;
+              if (op.applied && !op.undone) {
+                stats.successfulOperations++;
+              }
+              if (op.undone) {
+                stats.undoneOperations++;
+              }
+            });
+          });
+          
+          return stats;
+        }
+      },
+      
+      // 显示撤销历史界面
+      showUndoHistory() {
+        const historyHtml = `
+          <div class="undo-history-modal" id="undo-history-modal">
+            <div class="modal-overlay" onclick="ui.closeUndoHistory()"></div>
+            <div class="modal-content">
+              <div class="modal-header">
+                <h3>Translation History & Undo</h3>
+                <button onclick="ui.closeUndoHistory()" class="modal-close">×</button>
+              </div>
+              <div class="modal-body">
+                <div class="undo-tabs">
+                  <button class="undo-tab active" onclick="ui.switchUndoTab('sessions')">Translation Sessions</button>
+                  <button class="undo-tab" onclick="ui.switchUndoTab('text-search')">Text Search</button>
+                  <button class="undo-tab" onclick="ui.switchUndoTab('stats')">Statistics</button>
+                </div>
+                <div id="undo-content"></div>
+              </div>
+            </div>
+          </div>
+        `;
+        
+        document.body.insertAdjacentHTML('beforeend', historyHtml);
+        this.switchUndoTab('sessions');
+      },
+      
+      // 关闭撤销历史
+      closeUndoHistory() {
+        const modal = document.getElementById('undo-history-modal');
+        if (modal) {
+          modal.remove();
+        }
+      },
+      
+      // 切换撤销标签页
+      switchUndoTab(tabName) {
+        // 更新标签状态
+        document.querySelectorAll('.undo-tab').forEach(tab => {
+          tab.classList.remove('active');
+        });
+        event.target.classList.add('active');
+        
+        // 更新内容
+        const content = document.getElementById('undo-content');
+        switch (tabName) {
+          case 'sessions':
+            content.innerHTML = this.renderTranslationSessions();
+            break;
+          case 'text-search':
+            content.innerHTML = this.renderTextSearchUndo();
+            break;
+          case 'stats':
+            content.innerHTML = this.renderUndoStats();
+            break;
+        }
+      },
+      
+      // 渲染翻译会话列表
+      renderTranslationSessions() {
+        const sessions = appState.undoSystem.history;
+        
+        if (sessions.length === 0) {
+          return '<div class="empty-state">No translation sessions found</div>';
+        }
+        
+        return `
+          <div class="sessions-list">
+            ${sessions.map(session => `
+              <div class="session-item ${session.status}">
+                <div class="session-header">
+                  <div class="session-info">
+                    <div class="session-title">
+                      ${session.sourceLang} → ${session.targetLang} (${session.engine})
+                    </div>
+                    <div class="session-meta">
+                      ${new Date(session.timestamp).toLocaleString()} • 
+                      ${session.operations.length} operations • 
+                      Mode: ${session.mode}
+                    </div>
+                  </div>
+                  <div class="session-actions">
+                    ${session.status === 'completed' ? `
+                      <button class="btn btn-secondary btn-small" onclick="ui.undoManager.undoTranslationSession('${session.id}')">
+                        Undo Session
+                      </button>
+                    ` : ''}
+                    <span class="session-status ${session.status}">${session.status}</span>
+                  </div>
+                </div>
+                <div class="session-details">
+                  ${session.successCount || 0} successful, ${session.failureCount || 0} failed
+                  ${session.status === 'undone' ? ` • Undone at ${new Date(session.undoneAt).toLocaleString()}` : ''}
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        `;
+      },
+      
+      // 渲染文本搜索撤销
+      renderTextSearchUndo() {
+        return `
+          <div class="text-search-undo">
+            <div class="search-form">
+              <input type="text" class="input" id="undo-search-text" placeholder="输入要撤销的原始文本..." style="margin-bottom: 10px;">
+              <button class="btn btn-primary" onclick="ui.searchAndUndoText()">Search & Undo</button>
+            </div>
+            <div id="search-results"></div>
+          </div>
+        `;
+      },
+      
+      // 渲染撤销统计
+      renderUndoStats() {
+        const stats = this.undoManager.getUndoHistoryStats();
+        
+        return `
+          <div class="undo-stats">
+            <div class="stats-grid">
+              <div class="stat-card">
+                <div class="stat-value">${stats.totalSessions}</div>
+                <div class="stat-label">Total Sessions</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-value">${stats.completedSessions}</div>
+                <div class="stat-label">Completed Sessions</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-value">${stats.totalOperations}</div>
+                <div class="stat-label">Total Operations</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-value">${stats.successfulOperations}</div>
+                <div class="stat-label">Successful Operations</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-value">${stats.undoneOperations}</div>
+                <div class="stat-label">Undone Operations</div>
+              </div>
+            </div>
+            <div class="stats-actions">
+              <button class="btn btn-secondary" onclick="ui.clearUndoHistory()">Clear History</button>
+              <button class="btn btn-secondary" onclick="ui.exportUndoHistory()">Export History</button>
+            </div>
+          </div>
+        `;
+      },
+      
+      // 搜索并撤销文本
+      searchAndUndoText() {
+        const searchText = document.getElementById('undo-search-text').value.trim();
+        if (!searchText) {
+          this.showNotification('请输入搜索文本', 'warning');
+          return;
+        }
+        
+        this.undoManager.undoByOriginalText(searchText);
+      },
+      
+      // 清理撤销历史
+      clearUndoHistory() {
+        if (confirm('确定要清除所有撤销历史吗？此操作不可恢复。')) {
+          appState.undoSystem.history = [];
+          this.showNotification('撤销历史已清除', 'success');
+          this.closeUndoHistory();
+        }
+      },
+      
+      // 导出撤销历史
+      exportUndoHistory() {
+        const historyData = {
+          exportedAt: new Date().toISOString(),
+          history: appState.undoSystem.history
+        };
+        
+        const blob = new Blob([JSON.stringify(historyData, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `translation-history-${Date.now()}.json`;
+        a.click();
+        URL.revokeObjectURL(url);
+        
+        this.showNotification('撤销历史已导出', 'success');
+      },
+      
+      // 构建项目上下文
+      buildProjectContext() {
+        const prompt = appState.advancedPrompt;
+        let context = `PROJECT CONTEXT:
+- Type: ${prompt.projectType}`;
+        
+        if (prompt.industry) context += `\n- Industry: ${prompt.industry}`;
+        context += `\n- Target Audience: ${prompt.targetAudience}`;
+        context += `\n- Language Style: ${prompt.languageStyle}`;
+        
+        if (prompt.specialInstructions) {
+          context += `\n- Special Instructions: ${prompt.specialInstructions}`;
+        }
+        
+        return context;
+      },
+      
+      // 构建约束Prompt
+      buildConstraintsPrompt() {
+        if (appState.advancedPrompt.constraints.length === 0) {
+          return '';
+        }
+        
+        let constraintPrompt = 'FIXED TRANSLATION CONSTRAINTS:\n';
+        appState.advancedPrompt.constraints.forEach(constraint => {
+          constraintPrompt += `- "${constraint.source}" MUST be translated as "${constraint.target}"\n`;
+        });
+        
+        return constraintPrompt;
+      },
+      
+      // 加载过滤器设置
+      loadFilterSettings() {
+        const filters = appState.contentFilters;
+        
+        document.getElementById('filter-sf-symbols').checked = filters.skipSFSymbols;
+        document.getElementById('filter-font-icons').checked = filters.skipFontIcons;
+        document.getElementById('filter-unicode-private').checked = filters.skipUnicodePrivate;
+        document.getElementById('filter-empty-text').checked = filters.skipEmptyText;
+        document.getElementById('filter-single-chars').checked = filters.skipSingleChars;
+        document.getElementById('filter-placeholders').checked = filters.skipPlaceholders;
+        document.getElementById('custom-filter-patterns').value = filters.customPatterns;
+        document.getElementById('skip-words').value = filters.skipWords;
+      },
+      
+      // 测试过滤器
+      testFilters() {
+        const testText = document.getElementById('filter-test-input').value.trim();
+        if (!testText) {
+          this.showNotification('请输入测试文本', 'warning');
+          return;
+        }
+        
+        const shouldSkip = this.shouldSkipText(testText);
+        const resultDiv = document.getElementById('filter-test-result');
+        
+        if (shouldSkip) {
+          resultDiv.className = 'filter-test-result failed';
+          resultDiv.textContent = `❌ 该文本将被跳过\n原因: ${shouldSkip.reason}`;
+        } else {
+          resultDiv.className = 'filter-test-result passed';
+          resultDiv.textContent = '✅ 该文本将被翻译';
+        }
+      },
+      
+      // 判断是否跳过文本
+      shouldSkipText(text) {
+        const filters = appState.contentFilters;
+        
+        // SF Symbols检测 - 改进检测逻辑
+        if (filters.skipSFSymbols) {
+          // 检测SF Symbols的Unicode私有区域字符
+          if (/[\uE000-\uF8FF]/.test(text) || // 私有使用区域
+              /[\uF0000-\uFFFFF]/.test(text) || // 补充私有使用区域A
+              /[\u100000-\u10FFFF]/.test(text) || // 补充私有使用区域B
+              /^sf\./.test(text) || // 以sf.开头的文本标识
+              text.length === 1 && text.charCodeAt(0) >= 0xE000 && text.charCodeAt(0) <= 0xF8FF) {
+            return { skip: true, reason: 'SF Symbol or system icon detected' };
+          }
+        }
+        
+        // 空白文本检测
+        if (filters.skipEmptyText && /^\s*$/.test(text)) {
+          return { skip: true, reason: 'Empty or whitespace-only text' };
+        }
+        
+        // 单字符检测
+        if (filters.skipSingleChars && text.length === 1 && !/[\u4e00-\u9fff\u3400-\u4dbf]/.test(text)) {
+          return { skip: true, reason: 'Single non-CJK character' };
+        }
+        
+        // 自定义跳过词汇
+        if (filters.skipWords) {
+          const skipWords = filters.skipWords.split(',').map(w => w.trim().toLowerCase());
+          if (skipWords.some(word => text.toLowerCase().includes(word))) {
+            return { skip: true, reason: 'Contains skip word' };
+          }
+        }
+        
+        // 自定义正则模式
+        if (filters.customPatterns) {
+          const patterns = filters.customPatterns.split('\n').filter(p => p.trim());
+          for (const pattern of patterns) {
+            try {
+              const regex = new RegExp(pattern.trim());
+              if (regex.test(text)) {
+                return { skip: true, reason: `Matches custom pattern: ${pattern}` };
+              }
+            } catch (e) {
+              // 忽略无效正则
+            }
+          }
+        }
+        
+        return null;
+      },
+      
+      // 加载通用设置
+      loadGeneralSettings() {
+        const general = appState.general;
+        
+        document.getElementById('general-default-target-lang').value = appState.settings.defaultTargetLang;
+        document.getElementById('ui-language').value = general.uiLanguage;
+        document.getElementById('batch-size').value = general.batchSize;
+        document.getElementById('enable-caching').checked = general.enableCaching;
+        document.getElementById('auto-apply-translations').checked = general.autoApplyTranslations;
+        document.getElementById('auto-save-glossary').checked = general.autoSaveGlossary;
+      },
+      
+      // 加载词库设置
+      loadGlossarySettings() {
+        document.getElementById('glossary-enabled').checked = appState.glossary.enabled;
+        document.getElementById('glossary-sensitivity').value = appState.glossary.sensitivity;
+      },
+      
+      // 保存高级Prompt设置
+      saveAdvancedPromptSettings() {
+        const projectType = document.getElementById('project-type');
+        const industry = document.getElementById('project-industry');
+        const targetAudience = document.getElementById('target-audience');
+        const languageStyle = document.getElementById('language-style');
+        const specialInstructions = document.getElementById('special-instructions');
+        
+        if (projectType) appState.advancedPrompt.projectType = projectType.value;
+        if (industry) appState.advancedPrompt.industry = industry.value;
+        if (targetAudience) appState.advancedPrompt.targetAudience = targetAudience.value;
+        if (languageStyle) appState.advancedPrompt.languageStyle = languageStyle.value;
+        if (specialInstructions) appState.advancedPrompt.specialInstructions = specialInstructions.value;
+      },
+      
+      // 保存内容过滤设置
+      saveContentFilterSettings() {
+        const skipSFSymbols = document.getElementById('filter-sf-symbols');
+        const skipFontIcons = document.getElementById('filter-font-icons');
+        const skipUnicodePrivate = document.getElementById('filter-unicode-private');
+        const skipEmptyText = document.getElementById('filter-empty-text');
+        const skipSingleChars = document.getElementById('filter-single-chars');
+        const skipPlaceholders = document.getElementById('filter-placeholders');
+        const customPatterns = document.getElementById('custom-filter-patterns');
+        const skipWords = document.getElementById('skip-words');
+        
+        if (skipSFSymbols) appState.contentFilters.skipSFSymbols = skipSFSymbols.checked;
+        if (skipFontIcons) appState.contentFilters.skipFontIcons = skipFontIcons.checked;
+        if (skipUnicodePrivate) appState.contentFilters.skipUnicodePrivate = skipUnicodePrivate.checked;
+        if (skipEmptyText) appState.contentFilters.skipEmptyText = skipEmptyText.checked;
+        if (skipSingleChars) appState.contentFilters.skipSingleChars = skipSingleChars.checked;
+        if (skipPlaceholders) appState.contentFilters.skipPlaceholders = skipPlaceholders.checked;
+        if (customPatterns) appState.contentFilters.customPatterns = customPatterns.value;
+        if (skipWords) appState.contentFilters.skipWords = skipWords.value;
+      },
+      
+      // 保存通用设置
+      saveGeneralSettings() {
+        const defaultTargetLang = document.getElementById('general-default-target-lang');
+        const uiLanguage = document.getElementById('ui-language');
+        const batchSize = document.getElementById('batch-size');
+        const enableCaching = document.getElementById('enable-caching');
+        const autoApplyTranslations = document.getElementById('auto-apply-translations');
+        const autoSaveGlossary = document.getElementById('auto-save-glossary');
+        
+        if (defaultTargetLang) appState.settings.defaultTargetLang = defaultTargetLang.value;
+        if (uiLanguage) appState.general.uiLanguage = uiLanguage.value;
+        if (batchSize) appState.general.batchSize = parseInt(batchSize.value);
+        if (enableCaching) appState.general.enableCaching = enableCaching.checked;
+        if (autoApplyTranslations) appState.general.autoApplyTranslations = autoApplyTranslations.checked;
+        if (autoSaveGlossary) appState.general.autoSaveGlossary = autoSaveGlossary.checked;
+      },
+      
+      // Utilities
+      escapeHtml(text) {
+        if (!text) return '';
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+      }
+    };
+    
+    // Event listeners
+    window.addEventListener('message', function(event) {
+      if (event.data.pluginMessage) {
+        ui.handleMessage(event.data.pluginMessage);
+      }
+    });
+    
+    // Engine toggles
+    document.getElementById('openai-enabled').addEventListener('change', function() {
+      ui.toggleEngine('openai', this.checked);
+    });
+    
+    document.getElementById('gemini-enabled').addEventListener('change', function() {
+      ui.toggleEngine('gemini', this.checked);
+    });
+    
+    // Engine config changes
+    ['openai', 'gemini'].forEach(engine => {
+      document.getElementById(engine + '-key').addEventListener('input', function() {
+        appState.engines[engine].apiKey = this.value.trim();
+        ui.updateEngineDropdown();
+      });
+      
+      document.getElementById(engine + '-model').addEventListener('change', function() {
+        appState.engines[engine].model = this.value;
+      });
+    });
+    
+    // Font mapping toggle
+    document.getElementById('font-mapping-enabled').addEventListener('change', function() {
+      appState.fontMappingEnabled = this.checked;
+      const content = document.getElementById('font-mapping-content');
+      if (this.checked) {
+        content.classList.add('active');
+      } else {
+        content.classList.remove('active');
+      }
+    });
+    
+    // Engine selection monitoring
+    document.getElementById('engine').addEventListener('change', () => {
+      ui.updateEngineInterface();
+      ui.updateUI();
+    });
+
+    // Model and API key monitoring
+    document.getElementById('model-select').addEventListener('change', () => ui.updateUI());
+    document.getElementById('api-key').addEventListener('input', () => ui.updateUI());
+    
+    // Glossary input keyboard support
+    document.addEventListener('DOMContentLoaded', function() {
+      setTimeout(() => {
+        const glossarySourceInput = document.getElementById('glossary-source');
+        const glossaryTargetInput = document.getElementById('glossary-target');
+        
+        if (glossarySourceInput) {
+          glossarySourceInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+              e.preventDefault();
+              glossaryTargetInput.focus();
+            }
+          });
+        }
+        
+        if (glossaryTargetInput) {
+          glossaryTargetInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+              e.preventDefault();
+              ui.addGlossaryTerm();
+            }
+          });
+        }
+      }, 1000);
+    });
+    
+    // Initialize UI
+    ui.updateUI();
+    
+    // Try to connect to plugin
+    setTimeout(() => {
+      console.log('Attempting to connect to plugin...');
+      ui.postMessage('get-selection');
+    }, 500);
+    
+    console.log('TP Translator with Settings UI initialized');</script></body></html>

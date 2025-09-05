@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>TP Translator - UI Test</title>
+    <style>
+        body { font-family: -apple-system, sans-serif; margin: 20px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 8px; }
+        h2 { color: #333; }
+        button { padding: 8px 16px; margin: 5px; }
+        input { padding: 8px; margin: 5px; width: 200px; }
+    </style>
+</head>
+<body>
+    <h1>🧪 TP Translator - 词库功能测试</h1>
+    
+    <div class="test-section">
+        <h2>1. 模拟测试词库功能</h2>
+        <p>打开你的插件UI文件查看实际效果：</p>
+        <button onclick="openUI()">打开 UI 文件</button>
+        <script>
+        function openUI() {
+            window.open('/Users/kevin/Work/Code/figma-translator/test-version/ui-clean.html', '_blank');
+        }
+        </script>
+    </div>
+
+    <div class="test-section">
+        <h2>2. 测试步骤</h2>
+        <ol>
+            <li>在Figma中导入插件manifest.json</li>
+            <li>创建测试文本：Hello, Settings, Login</li>
+            <li>运行插件，测试词库添加功能</li>
+            <li>测试翻译集成（需要API Key）</li>
+        </ol>
+    </div>
+
+    <div class="test-section">
+        <h2>3. 预期功能清单</h2>
+        <ul>
+            <li>✅ 词库条目添加/删除</li>
+            <li>✅ 词库设置保存</li>
+            <li>✅ 键盘操作支持</li>
+            <li>✅ 翻译结果导入词库</li>
+            <li>✅ 匹配算法集成</li>
+        </ul>
+    </div>
+</body>
+</html>

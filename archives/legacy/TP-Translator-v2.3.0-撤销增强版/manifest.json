@@ -1,0 +1,26 @@
+{
+  "name": "TP Translator v2.3.0 撤销增强版 终极修复版",
+  "id": "1234567890123456789",
+  "api": "1.0.0",
+  "main": "code.js",
+  "ui": "ui.html",
+  "menu": [
+    {
+      "name": "TP Translator",
+      "command": "open-translator"
+    }
+  ],
+  "capabilities": [],
+  "enableProposedApi": false,
+  "editorType": ["figma"],
+  "documentAccess": "dynamic-page",
+  "networkAccess": {
+    "allowedDomains": [
+      "https://api.openai.com",
+      "https://generativelanguage.googleapis.com"
+    ]
+  },
+  "permissions": [
+    "currentuser"
+  ]
+}

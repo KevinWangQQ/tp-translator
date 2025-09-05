@@ -396,3 +396,5 @@ Error Handling:
 2. 定期运行 `npm run type-check` 了解类型问题
 3. 优先完成功能实现，后续统一修复类型问题
 4. 使用 `npm run lint` 确保代码风格一致性
+- 每个生成的安装包应该放在./releases/latest文件夹下以便于统一管理。
+- 每次打包都对版本号进行升级。

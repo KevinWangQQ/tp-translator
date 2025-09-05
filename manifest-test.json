@@ -1,17 +1,13 @@
 {
-  "name": "Advanced Figma Translator",
-  "id": "advanced-figma-translator-v1",
+  "name": "TP Translator v1.2.0 测试版",
+  "id": "1234567890123456789",
   "api": "1.0.0",
   "main": "code.js",
-  "ui": "ui.html",
+  "ui": "ui-test.html",
   "menu": [
     {
-      "name": "🌍 Advanced Translator",
+      "name": "TP Translator 测试",
       "command": "open-translator"
-    },
-    {
-      "name": "⚡ Quick Translate",
-      "command": "quick-translate"
     }
   ],
   "capabilities": [],
